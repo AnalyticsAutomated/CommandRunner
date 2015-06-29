@@ -1,24 +1,32 @@
-class localRunner:
+import os
+
+
+class runner:
     tmp_id = ''
     tmp_path = ''
     in_glob = ''
     out_glob = ''
-    command =  = ''
+    command = ''
 
     def __init__(self, tmp_id, tmp_path, in_glob, out_glob, cmd):
         ''' Constructs a local job '''
+
+        if os.path.isdir(tmp_path):
+            self.tmp_path = tmp_path
+        else:
+            raise OSError
+
         self.tmp_id = tmp_id
-        self.tmp_path = tmp_path
         self.in_glob = in_glob
         self.out_glob = out_glob
-        self.command = _translate_command(cmd, tmp_path, tmp_id, in_glob, out_glob)
+        self.command = self.__translate_command(cmd)
 
-    def _translated_command(command, path, id, input, output):
+    def __translate_command(self, command):
         '''
             takes the command string and substitutes the relevant files names
         '''
-        #sub [INPUT] in command string for id+"."+input
-        #sub [OUTPUT] in command string for id+"."+output
+        # sub [INPUT] in command string for id+"."+input
+        # sub [OUTPUT] in command string for id+"."+output
         return(command)
 
     def prepare():
@@ -35,7 +43,7 @@ class localRunner:
         '''
         pass
 
-    def _find_complete():
+    def __find_complete():
         '''
             read the exit status
         '''
