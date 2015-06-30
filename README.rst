@@ -27,9 +27,7 @@ Usage
 -----
 
     from commandRunner import *
-
-    r = commandRunner("ID_STRING", "/tmp/",
-                      ".in", ".out", "ls /tmp > $OUTPUT", "STRING OF DATA")
+    r = commandRunner("ID_STRING", "/tmp/", ".in", ".out", "ls /tmp > $OUTPUT", "STRING OF DATA")
     r.prepare()
     exit_status = r.run_cmd()
     r.tidy()
