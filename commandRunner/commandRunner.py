@@ -2,7 +2,9 @@ import os
 import re
 from subprocess import call
 
+
 class commandRunner:
+
     tmp_id = None
     tmp_path = None
     in_glob = None
