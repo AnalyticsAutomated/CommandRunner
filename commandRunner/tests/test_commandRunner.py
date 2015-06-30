@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+
 import unittest
 import os
 
-from commandRunner import *
+from commandRunner.commandRunner import *
 
 
 class commandRunnerTestCase(unittest.TestCase):
@@ -15,9 +17,8 @@ class commandRunnerTestCase(unittest.TestCase):
     data = "SOME EXAMPLE DATA"
 
     def setUp(self):
-
         self.r = commandRunner(self.id_string, self.tmp_path,
-                             self.in_glob, self.out_glob, self.cmd, self.data)
+                               self.in_glob, self.out_glob, self.cmd, self.data)
 
     def tearDown(self):
         path = self.tmp_path+self.id_string
@@ -64,21 +65,22 @@ class commandRunnerTestCase(unittest.TestCase):
             test __translated_command works as expected
         """
         self.r = commandRunner(self.id_string, self.tmp_path,
-                        self.in_glob, self.out_glob, "ls /tmp > $INPUT",
-                        self.data)
+                               self.in_glob, self.out_glob, "ls /tmp > $INPUT",
+                               self.data)
         test_string = "ls /tmp > /tmp/INTERESTING_ID_STRING/INTERESTING_ID_STRING.in"
         self.assertEqual(self.r.command, test_string)
 
     def test_translate_command_correctly_interpolate_both(self):
         self.r = commandRunner(self.id_string, self.tmp_path,
-                        self.in_glob, self.out_glob, "ls /tmp > $INPUT $OUTPUT",
-                        self.data)
+                               self.in_glob, self.out_glob,
+                               "ls /tmp > $INPUT $OUTPUT",
+                               self.data)
         test_string = "ls /tmp > /tmp/INTERESTING_ID_STRING/INTERESTING_ID_STRING.in /tmp/INTERESTING_ID_STRING/INTERESTING_ID_STRING.out"
         self.assertEqual(self.r.command, test_string)
 
     def test_translate_command_correctly_handles_globs_without_periods(self):
         self.r = commandRunner(self.id_string, self.tmp_path,
-                        "in", "out", self.cmd, self.data)
+                               "in", "out", self.cmd, self.data)
         test_string = "ls /tmp > /tmp/INTERESTING_ID_STRING/INTERESTING_ID_STRING.out"
         self.assertEqual(self.r.command, test_string)
 
@@ -91,8 +93,9 @@ class commandRunnerTestCase(unittest.TestCase):
 
     def test_prepare_without_data(self):
         self.r = commandRunner(self.id_string, self.tmp_path,
-                        self.in_glob, self.out_glob, "ls /tmp > $INPUT $OUTPUT",
-                        None)
+                               self.in_glob, self.out_glob,
+                               "ls /tmp > $INPUT $OUTPUT",
+                               None)
         self.r.prepare()
         path = self.tmp_path+self.id_string
         file = self.tmp_path+self.id_string+"/"+self.id_string+self.in_glob
