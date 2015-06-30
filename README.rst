@@ -5,10 +5,10 @@ commandRunner is yet another package created to handle running commands,
 scripts or programs on the command line. The principle class lets you run
 anything locally on your machine. Later classes are targetted at Analytics
 and data processing platforms such as Grid Engine and HADOOP. The class
-attempts to  run commands in in a moderately thread safe way by requiring that
+attempts to run commands in a moderately thread safe way by requiring that
 you provide with sufficient information that it can build a uniquely labelled
 temp directory for all input and output files. This means that this can play
-nicely with things like celery workers.
+nicely with things like Celery workers.
 
 Release 0.1
 -----------
@@ -25,6 +25,7 @@ Hadoop, Octave, and SAS Server.
 
 Usage
 -----
+This is the basic usages::
 
     from commandRunner import *
     r = commandRunner("ID_STRING", "/tmp/", ".in", ".out", "ls /tmp > $OUTPUT", "STRING OF DATA")
