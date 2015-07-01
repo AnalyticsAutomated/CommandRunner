@@ -10,7 +10,7 @@ you provide with sufficient information that it can build a uniquely labelled
 temp directory for all input and output files. This means that this can play
 nicely with things like Celery workers.
 
-Release 0.1
+Release 0.2
 -----------
 
 This release supports running commands on localhost.  It also uses interpolation
