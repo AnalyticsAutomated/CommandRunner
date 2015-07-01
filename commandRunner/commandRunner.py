@@ -73,7 +73,7 @@ class commandRunner:
         '''
             Makes a directory and then moves the input data file there
         '''
-        pass
+        raise NotImplementedError
 
     def run_cmd(self):
         '''
@@ -81,10 +81,10 @@ class commandRunner:
             If exit is 0 then pass back if not decide what to do next. (try
             again?)
         '''
-        pass
+        raise NotImplementedError
 
     def tidy(self):
         '''
             Delete everything in the tmp dir and then remove the temp dir
         '''
-        pass
+        raise NotImplementedError
