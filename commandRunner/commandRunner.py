@@ -59,7 +59,6 @@ class commandRunner:
         if "$INPUT" in self.command and self.in_glob is None:
             raise ValueError('$INPUT present in command but no in_glob provided')
 
-
     def __translate_command(self, command):
         '''
             takes the command string and substitutes the relevant files names
@@ -74,13 +73,7 @@ class commandRunner:
         '''
             Makes a directory and then moves the input data file there
         '''
-        if not os.path.exists(self.path):
-            os.makedirs(self.path)
-
-        if self.data is not None:
-            fh = open(self.in_path, 'w')
-            fh.write(self.data)
-            fh.close()
+        pass
 
     def run_cmd(self):
         '''
@@ -88,27 +81,10 @@ class commandRunner:
             If exit is 0 then pass back if not decide what to do next. (try
             again?)
         '''
-        exit_status = None
-        try:
-            exit_status = call(self.command, shell=True)
-        except Exception as e:
-            raise OSError
-
-        if exit_status == 0:
-            if os.path.exists(self.out_path):
-                with open(self.out_path, 'r') as content_file:
-                    self.output_data = content_file.read()
-        else:
-            raise OSError
-        return(exit_status)
+        pass
 
     def tidy(self):
         '''
             Delete everything in the tmp dir and then remove the temp dir
         '''
-        if os.path.exists(self.in_path):
-            os.remove(self.in_path)
-        if os.path.exists(self.out_path):
-            os.remove(self.out_path)
-        if os.path.exists(self.path):
-            os.rmdir(self.path)
+        pass
