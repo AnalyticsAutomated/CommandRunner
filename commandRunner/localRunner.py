@@ -39,6 +39,7 @@ class localRunner(commandRunner.commandRunner):
             again?)
         '''
         exit_status = None
+        os.chdir(self.path)
         try:
             exit_status = call(self.command, shell=True)
         except Exception as e:
