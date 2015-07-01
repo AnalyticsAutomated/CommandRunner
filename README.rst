@@ -61,3 +61,12 @@ Tests
 Run tests with:
 
     python test_commandRunner.py
+
+TODO
+----
+
+1. Implement rserveRunner for running commands in r
+2. Implement geRunner for running commands on Grid Engine
+3. Implement hadoopRunner for running command on Hadoop
+4. Refactor commandRunner to abstract base class
+5. Move commandRunner tests out of localRunner tests
