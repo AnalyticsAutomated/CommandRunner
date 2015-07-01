@@ -42,14 +42,14 @@ class localRunner(commandRunner.commandRunner):
         try:
             exit_status = call(self.command, shell=True)
         except Exception as e:
-            raise OSError
+            raise OSError("call() attempt failed")
 
         if exit_status == 0:
             if os.path.exists(self.out_path):
                 with open(self.out_path, 'r') as content_file:
                     self.output_data = content_file.read()
         else:
-            raise OSError
+            raise OSError("Exist status" + str(exit_status))
         return(exit_status)
 
     def tidy(self):
