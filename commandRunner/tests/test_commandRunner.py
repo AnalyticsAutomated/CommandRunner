@@ -17,8 +17,9 @@ class commandRunnerTestCase(unittest.TestCase):
     data = "SOME EXAMPLE DATA"
 
     def setUp(self):
-        self.r = commandRunner(self.id_string, self.tmp_path,
-                               self.in_glob, self.out_glob, self.cmd, self.data)
+        self.r = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                               in_glob=self.in_glob, out_glob=self.out_glob,
+                               command=self.cmd, input_data=self.data)
 
     def tearDown(self):
         path = self.tmp_path+self.id_string
@@ -49,9 +50,30 @@ class commandRunnerTestCase(unittest.TestCase):
         """
             Test the non-existing path raises and exception
         """
-        self.assertRaises(OSError, commandRunner, self.id_string,
-                          "/Blarghelblarghel/", self.in_glob, self.out_glob,
-                          self.cmd, self.data)
+        self.assertRaises(OSError, commandRunner, tmp_id=self.id_string,
+                          tmp_path="/blerghalmcblarghel",
+                          in_glob=self.in_glob, out_glob=self.out_glob,
+                          command=self.cmd, input_data=self.data)
+
+    def testRaisesErrorifDataProvidedButNoinGlob(self):
+        """
+            Test the non-existing path raises and exception
+        """
+        self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path, in_glob=None,
+                          out_glob=self.out_glob, command=self.cmd,
+                          input_data=self.data)
+
+    def testHappyWithNoinglobAndNoData(self):
+        """
+            Test the non-existing path raises and exception
+        """
+        r = commandRunner(tmp_id=self.id_string,
+                          tmp_path=self.tmp_path, in_glob=None,
+                          out_glob=self.out_glob, command=self.cmd,
+                          input_data=None)
+
+
 
     def test_translate_command_correctly_interpolate_output(self):
         """
@@ -64,23 +86,34 @@ class commandRunnerTestCase(unittest.TestCase):
         """
             test __translated_command works as expected
         """
-        self.r = commandRunner(self.id_string, self.tmp_path,
-                               self.in_glob, self.out_glob, "ls /tmp > $INPUT",
-                               self.data)
+        self.r = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                               in_glob=self.in_glob, out_glob=self.out_glob,
+                               command="ls /tmp > $INPUT", input_data=self.data)
         test_string = "ls /tmp > /tmp/INTERESTING_ID_STRING/INTERESTING_ID_STRING.in"
         self.assertEqual(self.r.command, test_string)
 
+    def test_rejectedIfINPUTbutNoInGlob(self):
+        """
+            Rejects if $INPUT in command but no inglob provided
+        """
+        self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path, in_glob=None,
+                          out_glob=self.out_glob, command="ls /tmp > $INPUT $OUTPUT",
+                          input_data=self.data)
+
+
     def test_translate_command_correctly_interpolate_both(self):
-        self.r = commandRunner(self.id_string, self.tmp_path,
-                               self.in_glob, self.out_glob,
-                               "ls /tmp > $INPUT $OUTPUT",
-                               self.data)
+        self.r = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                               in_glob=self.in_glob, out_glob=self.out_glob,
+                               command="ls /tmp > $INPUT $OUTPUT", input_data=self.data)
         test_string = "ls /tmp > /tmp/INTERESTING_ID_STRING/INTERESTING_ID_STRING.in /tmp/INTERESTING_ID_STRING/INTERESTING_ID_STRING.out"
         self.assertEqual(self.r.command, test_string)
 
     def test_translate_command_correctly_handles_globs_without_periods(self):
-        self.r = commandRunner(self.id_string, self.tmp_path,
-                               "in", "out", self.cmd, self.data)
+        self.r = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                               in_glob="in", out_glob="out",
+                               command=self.cmd, input_data=self.data)
+
         test_string = "ls /tmp > /tmp/INTERESTING_ID_STRING/INTERESTING_ID_STRING.out"
         self.assertEqual(self.r.command, test_string)
 
@@ -92,10 +125,9 @@ class commandRunnerTestCase(unittest.TestCase):
         self.assertEqual(os.path.exists(file), True)
 
     def test_prepare_without_data(self):
-        self.r = commandRunner(self.id_string, self.tmp_path,
-                               self.in_glob, self.out_glob,
-                               "ls /tmp > $INPUT $OUTPUT",
-                               None)
+        self.r = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                               in_glob=self.in_glob, out_glob=self.out_glob,
+                               command=self.cmd, input_data=None)
         self.r.prepare()
         path = self.tmp_path+self.id_string
         file = self.tmp_path+self.id_string+"/"+self.id_string+self.in_glob
