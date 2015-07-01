@@ -29,8 +29,9 @@ This is the basic usages::
 
     from commandRunner import *
 
-    r = commandRunner("ID_STRING", "/tmp/", ".in", ".out", "ls /tmp > $OUTPUT",
-                      "STRING OF DATA")
+    r = commandRunner(tmp_id="ID_STRING", tmp_path=,/tmp/"
+                      in_glob=.in", out_glob=.out",
+                      command="ls /tmp > $OUTPUT", input_data="STRING OF DATA")
     r.prepare()
     exit_status = r.run_cmd()
     r.tidy()
@@ -44,7 +45,12 @@ needed. In this instance "ID_STRING", and a path where temporary files can be
 placed are used to create a tempdir called /tmp/ID_STRING/. Next it takes and
 string of data and makes and input file given the provided input file ending
 (.in) which would be /tmp/ID_STRING/ID_STRING.in and this file would contain
-"STRING OF DATA"
+"STRING OF DATA".
+
+tmp_id, tmp_path and command are required.
+
+in_glob is only required if the command contains $INPUT and input data is
+given
 
 r.run_cmd() runs the command string provided. First anything labelled $OUTPUT
 of $INPUT will be replaced with the path to the temporary files the process

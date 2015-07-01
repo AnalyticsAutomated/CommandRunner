@@ -59,6 +59,9 @@ class commandRunner:
         if "$INPUT" in self.command and self.in_glob is None:
             raise ValueError('$INPUT present in command but no in_glob provided')
 
+        if self.command is None:
+            raise ValueError('command is required')
+
     def __translate_command(self, command):
         '''
             takes the command string and substitutes the relevant files names
