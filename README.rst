@@ -76,3 +76,6 @@ TODO
 3. Implement hadoopRunner for running command on Hadoop
 4. Refactor commandRunner to abstract base class
 5. Move commandRunner tests out of localRunner tests
+6. Implement sasRunner for a SAS backend
+7. Implement octaveRunner for Octave backend
+8. matlab? mathematica?
