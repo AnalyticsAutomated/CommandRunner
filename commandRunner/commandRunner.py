@@ -29,7 +29,8 @@ class commandRunner:
         # if anything is passed it must be a string
         for key, value in kwargs.items():
             if not isinstance(value, str) and value is not None:
-                raise TypeError('Argument {} not a string: {}'.format(key, value))
+                raise TypeError('Argument {} not a string: {}'.format(key,
+                                                                      value))
 
         if os.path.isdir(kwargs['tmp_path']):
             self.tmp_path = kwargs.pop('tmp_path', '')
@@ -57,7 +58,8 @@ class commandRunner:
             raise ValueError('tmp_path missing')
 
         if "$INPUT" in self.command and self.in_glob is None:
-            raise ValueError('$INPUT present in command but no in_glob provided')
+            raise ValueError("$INPUT present in command "
+                             "but no in_glob provided")
 
         if self.command is None:
             raise ValueError('command is required')
