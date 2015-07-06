@@ -3,8 +3,6 @@ import unittest
 import os
 from unittest.mock import patch
 
-import env
-
 from commandRunner.localRunner import *
 
 # TODO: Fixtures and actual system calls aplenty here, could all be mocked if
