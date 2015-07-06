@@ -5,10 +5,10 @@ from commandRunner import commandRunner
 from subprocess import call
 
 
-class localRunner(commandRunner.commandRunner):
+class localRunner(commandRunner):
 
     def __init__(self, **kwargs):
-        commandRunner.commandRunner.__init__(self, **kwargs)
+        super(localRunner, self).__init__(**kwargs)
 
     def __translate_command(self, command):
         '''

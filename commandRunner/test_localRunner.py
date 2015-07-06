@@ -1,10 +1,9 @@
-from __future__ import absolute_import
 
 import unittest
 import os
 from unittest.mock import patch
 
-from commandRunner.localRunner import *
+from localRunner import *
 
 # TODO: Fixtures and actual system calls aplenty here, could all be mocked if
 # I had time to fix all that. At the moment we just mock the time consuming

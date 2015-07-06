@@ -4,7 +4,7 @@ import types
 from subprocess import call
 
 
-class commandRunner:
+class commandRunner():
 
     tmp_id = None
     tmp_path = None
