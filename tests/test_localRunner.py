@@ -160,8 +160,21 @@ class localRunnerTestCase(unittest.TestCase):
     @patch('commandRunner.localRunner.call', return_value=1)
     def test_run_with_alternative_success_exit_status(self, m):
         self.r.prepare()
-        exit_status = self.r.run_cmd(success_param=1)
+        exit_status = self.r.run_cmd(success_params=[1])
         self.assertEqual(exit_status, 1)
+
+    @patch('commandRunner.localRunner.call', return_value=1)
+    def test_run_with_array_of_exit_status_returning_one(self, m):
+        self.r.prepare()
+        exit_status = self.r.run_cmd(success_params=[0,1])
+        self.assertEqual(exit_status, 1)
+
+    @patch('commandRunner.localRunner.call', return_value=0)
+    def test_run_with_array_of_exit_status_returning_two(self, m):
+        self.r.prepare()
+        exit_status = self.r.run_cmd(success_params=[0,1])
+        self.assertEqual(exit_status, 0)
+
 
     def test_tidy_removes_all_files_and_dirs(self):
         self.r.prepare()

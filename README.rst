@@ -33,7 +33,7 @@ This is the basic usages::
                       in_glob=.in", out_glob=.out",
                       command="ls /tmp > $OUTPUT", input_data="STRING OF DATA")
     r.prepare()
-    exit_status = r.run_cmd()
+    exit_status = r.run_cmd(success_params=[0])
     r.tidy()
     print(r.output_data)
 
@@ -52,11 +52,13 @@ tmp_id, tmp_path and command are required.
 in_glob is only required if the command contains $INPUT and input data is
 given
 
-r.run_cmd() runs the command string provided. First anything labelled $OUTPUT
-of $INPUT will be replaced with the path to the temporary files the process
-will generate.  In this instance "ls /tmp > $OUTPUT" will become
-"ls /tmp > /tmp/ID_STRING/ID_STRING.out". Any command will be run so this is
-potentially very dangerous. The exit status of the command is returned
+r.run_cmd(success_params=[0]) runs the command string provided. First anything
+labelled $OUTPUT of $INPUT will be replaced with the path to the temporary
+files the process will generate.  In this instance "ls /tmp > $OUTPUT" will
+become "ls /tmp > /tmp/ID_STRING/ID_STRING.out". We can provide an array of
+unix exits statuses we consider to be succesful exists, default is [0]. Any
+command will be run so this is potentially very dangerous. The exit status of
+the command is returned.
 
 r.tidy() cleans up deleting any input and output files and the temporary
 working directory. Any data in the output file is read in to r.output_data
@@ -66,7 +68,7 @@ Tests
 
 Run tests with:
 
-    python test_commandRunner.py
+    python setup.py test
 
 TODO
 ----
