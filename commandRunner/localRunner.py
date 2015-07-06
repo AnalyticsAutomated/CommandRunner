@@ -32,7 +32,7 @@ class localRunner(commandRunner.commandRunner):
             fh.write(self.data)
             fh.close()
 
-    def run_cmd(self):
+    def run_cmd(self, success_param=0):
         '''
             run the command we constructed when the object was initialised.
             If exit is 0 then pass back if not decide what to do next. (try
@@ -45,7 +45,8 @@ class localRunner(commandRunner.commandRunner):
         except Exception as e:
             raise OSError("call() attempt failed")
 
-        if exit_status == 0:
+        
+        if exit_status == success_param:
             if os.path.exists(self.out_path):
                 with open(self.out_path, 'r') as content_file:
                     self.output_data = content_file.read()

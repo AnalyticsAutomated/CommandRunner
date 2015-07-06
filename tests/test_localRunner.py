@@ -141,16 +141,27 @@ class localRunnerTestCase(unittest.TestCase):
         path = self.tmp_path+self.id_string
         file = self.tmp_path+self.id_string+"/"+self.id_string+self.in_glob
         self.assertEqual(os.path.isdir(path), True)
-        self.assertEqual(os.path.exists(file), False)
+    #     self.assertEqual(os.path.exists(file), False)
 
-    @patch('subprocess.call', return_value=0)
+    @patch('commandRunner.localRunner.call', return_value=0)
     def test_run(self, m):
         self.r.prepare()
         exit_status = self.r.run_cmd()
         self.assertEqual(exit_status, 0)
+    # # TODO: more thorough testing of failure states and sensible behaviour if
+    # # we are not producing files
+
+    def test_run_with_file_printing(self):
+        self.r.prepare()
+        exit_status = self.r.run_cmd()
+        self.assertEqual(exit_status, 0)
         self.assertNotEqual(self.r.output_data, None)
-    # TODO: more thorough testing of failure states and sensible behaviour if
-    # we are not producing files
+
+    @patch('commandRunner.localRunner.call', return_value=1)
+    def test_run_with_alternative_success_exit_status(self, m):
+        self.r.prepare()
+        exit_status = self.r.run_cmd(success_param=1)
+        self.assertEqual(exit_status, 1)
 
     def test_tidy_removes_all_files_and_dirs(self):
         self.r.prepare()
