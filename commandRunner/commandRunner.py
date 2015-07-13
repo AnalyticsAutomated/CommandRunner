@@ -16,6 +16,8 @@ class commandRunner():
     in_path = None
     out_path = None
     path = None
+    flags = None
+    options = None
 
     def __init__(self, **kwargs):
         '''
@@ -28,6 +30,8 @@ class commandRunner():
 
         # if anything is passed it must be a string
         for key, value in kwargs.items():
+            if key is 'flags' or key is 'options':
+                continue
             if not isinstance(value, str) and value is not None:
                 raise TypeError('Argument {} not a string: {}'.format(key,
                                                                       value))
@@ -41,6 +45,8 @@ class commandRunner():
         self.in_glob = kwargs.pop('in_glob', '')
         self.out_glob = kwargs.pop('out_glob', '')
         self.data = kwargs.pop('input_data', '')
+        self.flags = kwargs.pop('flags', None)
+        self.options = kwargs.pop('options', None)
         self.tmp_path = re.sub("/$", '', self.tmp_path)
         self.path = self.tmp_path+"/"+self.tmp_id+"/"
         if self.in_glob is not None:
@@ -60,6 +66,13 @@ class commandRunner():
         if "$INPUT" in self.command and self.in_glob is None:
             raise ValueError("$INPUT present in command "
                              "but no in_glob provided")
+        if "$FLAGS" in self.command and self.flags is None:
+            raise ValueError("$FLAGS present in command "
+                             "but no flags () provided")
+
+        if "$OPTIONS" in self.command and self.options is None:
+            raise ValueError("$OPTIONS present in command "
+                             "but no options {{ }} provided")
 
         if self.command is None:
             raise ValueError('command is required')
@@ -72,6 +85,20 @@ class commandRunner():
         command = command.replace("$OUTPUT", self.out_path)
         if self.in_path is not None:
             command = command.replace("$INPUT", self.in_path)
+
+        flags_str = ""
+        if self.flags is not None:
+            for flag in self.flags:
+                flags_str += flag+" "
+        flags_str = flags_str[:-1]
+        command = command.replace("$FLAGS", flags_str)
+
+        options_str = ""
+        if self.options is not None:
+            for key, value in sorted(self.options.items()):
+                options_str += key+" "+value+" "
+        options_str = options_str[:-1]
+        command = command.replace("$OPTIONS", options_str)
         return(command)
 
     def prepare(self):

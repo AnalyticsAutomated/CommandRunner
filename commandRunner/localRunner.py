@@ -10,16 +10,6 @@ class localRunner(commandRunner.commandRunner):
     def __init__(self, **kwargs):
         commandRunner.commandRunner.__init__(self, **kwargs)
 
-    def __translate_command(self, command):
-        '''
-            takes the command string and substitutes the relevant files names
-        '''
-        # interpolate the file names if needed
-        command = command.replace("$OUTPUT", self.out_path)
-        if self.in_path is not None:
-            command = command.replace("$INPUT", self.in_path)
-        return(command)
-
     def prepare(self):
         '''
             Makes a directory and then moves the input data file there

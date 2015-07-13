@@ -97,6 +97,51 @@ class localRunnerTestCase(unittest.TestCase):
                       "/tmp/INTERESTING_ID_STRING/INTERESTING_ID_STRING.in"
         self.assertEqual(self.r.command, test_string)
 
+    def test_translate_command_correctly_interpolate_flags(self):
+        """
+        test __translated_command works as expected
+        """
+        self.r = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                             in_glob=self.in_glob, out_glob=self.out_glob,
+                             command="ls /tmp $FLAGS > $INPUT",
+                             input_data=self.data, flags=('-l', '-ah'))
+        test_string = "ls /tmp -l -ah > " \
+                      "/tmp/INTERESTING_ID_STRING/INTERESTING_ID_STRING.in"
+        self.assertEqual(self.r.command, test_string)
+
+    def test_translate_command_correctly_interpolate_options(self):
+        """
+            test __translated_command works as expected
+        """
+        self.r = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                             in_glob=self.in_glob, out_glob=self.out_glob,
+                             command="ls /tmp $OPTIONS > $INPUT",
+                             input_data=self.data, options={'-a': '12',
+                                                            'b': '1'})
+        test_string = "ls /tmp -a 12 b 1 > " \
+                      "/tmp/INTERESTING_ID_STRING/INTERESTING_ID_STRING.in"
+        self.assertEqual(self.r.command, test_string)
+
+    def test_rejectwhenFLAGSandNoFlagsGiven(self):
+        """
+            test __translated_command works as expected
+        """
+        self.assertRaises(ValueError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path, in_glob=None,
+                          out_glob=self.out_glob, command="ls /tmp $FLAGS > "
+                                                          "$OUTPUT",
+                          input_data=self.data)
+
+    def test_rejectwhenOPTIONSandNoOptionsGiven(self):
+        """
+            test __translated_command works as expected
+        """
+        self.assertRaises(ValueError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path, in_glob=None,
+                          out_glob=self.out_glob, command="ls /tmp $OPTIONS > "
+                                                          "$OUTPUT",
+                          input_data=self.data)
+
     def test_rejectedIfINPUTbutNoInGlob(self):
         """
             Rejects if $INPUT in command but no inglob provided
@@ -174,7 +219,6 @@ class localRunnerTestCase(unittest.TestCase):
         self.r.prepare()
         exit_status = self.r.run_cmd(success_params=[0,1])
         self.assertEqual(exit_status, 0)
-
 
     def test_tidy_removes_all_files_and_dirs(self):
         self.r.prepare()
