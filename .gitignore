@@ -1,0 +1,8 @@
+*.py[cod]
+*.json
+*~
+DEADJOE
+media/temp
+submissions/*
+__pycache__/
+/*.egg-info

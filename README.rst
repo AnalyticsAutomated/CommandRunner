@@ -31,7 +31,8 @@ This is the basic usages::
 
     r = commandRunner(tmp_id="ID_STRING", tmp_path=,/tmp/"
                       in_glob=.in", out_glob=.out",
-                      command="ls /tmp > $OUTPUT", input_data="STRING OF DATA")
+                      command="ls $FLAGS $OPTIONS /tmp > $OUTPUT",
+                      input_data="STRING OF DATA", flags=[], options={})
     r.prepare()
     exit_status = r.run_cmd(success_params=[0])
     r.tidy()
@@ -58,7 +59,9 @@ files the process will generate.  In this instance "ls /tmp > $OUTPUT" will
 become "ls /tmp > /tmp/ID_STRING/ID_STRING.out". We can provide an array of
 unix exits statuses we consider to be succesful exists, default is [0]. Any
 command will be run so this is potentially very dangerous. The exit status of
-the command is returned.
+the command is returned. Flags is an array of strings which will be interpolated
+in to the command strings to replace $FLAGS. options is a dict of string:string
+key:values which will be interpolated to replace $OPTIONS as command line options
 
 r.tidy() cleans up deleting any input and output files and the temporary
 working directory. Any data in the output file is read in to r.output_data

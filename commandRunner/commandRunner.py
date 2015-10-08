@@ -68,7 +68,7 @@ class commandRunner():
                              "but no in_glob provided")
         if "$FLAGS" in self.command and self.flags is None:
             raise ValueError("$FLAGS present in command "
-                             "but no flags () provided")
+                             "but no flags [] provided")
 
         if "$OPTIONS" in self.command and self.options is None:
             raise ValueError("$OPTIONS present in command "
