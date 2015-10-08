@@ -17,10 +17,12 @@ class geRunner(commandRunner.commandRunner):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
 
-        if self.data is not None:
-            fh = open(self.in_path, 'w')
-            fh.write(self.data)
-            fh.close()
+        if self.input_data is not None:
+            for key in self.input_data.keys():
+                file_path = self.path+key
+                fh = open(file_path, 'w')
+                fh.write(self.input_data[key])
+                fh.close()
 
     def run_cmd(self, success_params=[0]):
         '''
@@ -30,9 +32,12 @@ class geRunner(commandRunner.commandRunner):
         '''
         exit_status = None
         # try:
-        #     exit_status = call(self.command, shell=True)
+        # Open session
+        # Send command, with resource and time set correctly
+        # Wait
+        #
         # except Exception as e:
-        #     raise OSError("call() attempt failed")
+        #     raise OSError("DRMAA session failed to execute")
         #
         # if exit_status in success_params:
         #     if os.path.exists(self.out_path):
@@ -46,9 +51,12 @@ class geRunner(commandRunner.commandRunner):
         '''
             Delete everything in the tmp dir and then remove the tjmp dir
         '''
-        if os.path.exists(self.in_path):
-            os.remove(self.in_path)
-        if os.path.exists(self.out_path):
-            os.remove(self.out_path)
+        for this_file in os.listdir(self.path):
+            file_path = os.path.join(self.path, this_file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+            except Exception as e:
+                print(e)
         if os.path.exists(self.path):
             os.rmdir(self.path)
