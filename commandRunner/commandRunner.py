@@ -17,12 +17,8 @@ class commandRunner():
     output_string = None
     options = None
     flags = None
-    # data = None
-    # output_data = None
-    # in_path = None
-    # out_path = None
-    # path = None
-    # flags = None
+    output_data = None
+    path = None
 
     def __init__(self, **kwargs):
         '''
@@ -42,18 +38,10 @@ class commandRunner():
 
         self.__check_arguments(kwargs)
 
-        # self.tmp_path = re.sub("/$", '', self.tmp_path)
-        # self.path = self.tmp_path+"/"+self.tmp_id+"/"
-        # if self.in_glob is not None:
-        #     self.in_glob = re.sub("^\.", '', self.in_glob)
-        #     self.in_path = self.path+self.tmp_id+"."+self.in_glob
-        # self.out_glob = re.sub("^\.", '', self.out_glob)
-        # self.out_path = self.path+self.tmp_id+"."+self.out_glob
-        # self.command = self.__translate_command(kwargs.pop('command', ''))
-        #
-        # # ensure we have an in_glob if we have been passed data
-        # if self.data is not None and self.in_glob is None:
-        #     raise ValueError('in_glob missing but data provided')
+        self.tmp_path = re.sub("/$", '', self.tmp_path)
+        self.path = self.tmp_path+"/"+self.tmp_id+"/"
+#       self.command = self.__translate_command(kwargs.pop('command', ''))
+        self.command = self.__translate_command(self.command)
 
     def __check_arguments(self, kwargs):
         # flags = (strings,)
@@ -137,9 +125,10 @@ class commandRunner():
             takes the command string and substitutes the relevant files names
         '''
         # interpolate the file names if needed
-        command = command.replace("$OUTPUT", self.out_path)
-        if self.in_path is not None:
-            command = command.replace("$INPUT", self.in_path)
+        if self.output_string is not None:
+            command = command.replace("$OUTPUT", self.output_string)
+        if self.input_string is not None:
+            command = command.replace("$INPUT", self.input_string)
 
         flags_str = ""
         if self.flags is not None:
