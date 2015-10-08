@@ -14,14 +14,15 @@ class commandRunner():
     command = None
 
     input_string = None
-
+    output_string = None
+    options = None
+    flags = None
     # data = None
     # output_data = None
     # in_path = None
     # out_path = None
     # path = None
     # flags = None
-    # options = None
 
     def __init__(self, **kwargs):
         '''
@@ -41,19 +42,6 @@ class commandRunner():
 
         self.__check_arguments(kwargs)
 
-        # # if anything is passed it must be a string
-        # for key, value in kwargs.items():
-        #     if key is 'flags' or key is 'options'or key is 'options':
-        #         continue
-        #     if not isinstance(value, str) and value is not None:
-        #         raise TypeError('Argument {} not a string: {}'.format(key,
-        #                                                               value))
-        # self.tmp_id = kwargs.pop('tmp_id', '')
-        # self.in_glob = kwargs.pop('in_glob', '')
-        # self.out_glob = kwargs.pop('out_glob', '')
-        # self.data = kwargs.pop('input_data', '')
-        # self.flags = kwargs.pop('flags', None)
-        # self.options = kwargs.pop('options', None)
         # self.tmp_path = re.sub("/$", '', self.tmp_path)
         # self.path = self.tmp_path+"/"+self.tmp_id+"/"
         # if self.in_glob is not None:
@@ -66,29 +54,8 @@ class commandRunner():
         # # ensure we have an in_glob if we have been passed data
         # if self.data is not None and self.in_glob is None:
         #     raise ValueError('in_glob missing but data provided')
-        #
-        # if self.tmp_path is None:
-        #     raise ValueError('tmp_path missing')
-        #
-        # if "$INPUT" in self.command and self.in_glob is None:
-        #     raise ValueError("$INPUT present in command "
-        #                      "but no in_glob provided")
-        # if "$FLAGS" in self.command and self.flags is None:
-        #     raise ValueError("$FLAGS present in command "
-        #                      "but no flags () provided")
-        #
-        # if "$OPTIONS" in self.command and self.options is None:
-        #     raise ValueError("$OPTIONS present in command "
-        #                      "but no options {{ }} provided")
-        #
-        # if self.command is None:
-        #     raise ValueError('command is required')
 
     def __check_arguments(self, kwargs):
-
-        # input_string="test.file"
-        # output_string="out.file"
-        # options = {flag:entry}
         # flags = (strings,)
         if os.path.isdir(kwargs['tmp_path']):
             self.tmp_path = kwargs.pop('tmp_path', '')
@@ -123,8 +90,47 @@ class commandRunner():
             else:
                 raise TypeError('input_string must be str')
             if "$INPUT" not in self.command:
-                raise ValueError("input_string provided but no $INPUT in"
+                raise ValueError("input_string provided but no $INPUT in "
                                  "command string")
+        if 'output_string' in kwargs:
+            if isinstance(kwargs['output_string'], str):
+                self.output_string = kwargs.pop('output_string', '')
+            else:
+                raise TypeError('output_string must be str')
+            if "$OUTPUT" not in self.command:
+                raise ValueError("output_string provided but no $OUTPUT in "
+                                 "command string")
+
+        if 'options' in kwargs:
+            if isinstance(kwargs['options'], dict):
+                self.options = kwargs.pop('options', '')
+            else:
+                raise TypeError('options must be dict')
+            if "$OPTIONS" not in self.command:
+                raise ValueError("options provided but no $OPTIONS in "
+                                 "command string")
+
+        if 'flags' in kwargs:
+            if isinstance(kwargs['flags'], list):
+                self.flags = kwargs.pop('flags', '')
+            else:
+                raise TypeError('flags must be list')
+            if "$FLAGS" not in self.command:
+                raise ValueError("flags provided but no $FLAGS in "
+                                 "command string")
+
+        if "$OPTIONS" in self.command and self.options is None:
+            raise ValueError("Command string references $OPTIONS but no"
+                             "options provided")
+        if "$FLAGS" in self.command and self.flags is None:
+            raise ValueError("Command string references $FLAGS but no"
+                             "flags provided")
+        if "$INPUT" in self.command and self.input_string is None:
+            raise ValueError("Command string references $INPUT but no"
+                             "input_string provided")
+        if "$OUTPUT" in self.command and self.output_string is None:
+            raise ValueError("Command string references $OUTPUT but no"
+                             "output_string provided")
 
     def __translate_command(self, command):
         '''

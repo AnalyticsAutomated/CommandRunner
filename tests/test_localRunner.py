@@ -18,7 +18,8 @@ class localRunnerTestCase(unittest.TestCase):
     # REQUIRED
     id_string = "INTERESTING_ID_STRING"
     tmp_path = "/tmp"
-    cmd = "ls /tmp/$INPUT > $OUTPUT"
+    cmd_simple = "ls /tmp"
+    cmd_complete = "ls $OPTIONS $FLAGS /tmp/$INPUT > $OUTPUT"
 
     # OPTIONAL
     input_string = "input.in"
@@ -30,16 +31,15 @@ class localRunnerTestCase(unittest.TestCase):
 
     def setUp(self):
         self.r = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                             out_globs=self.out_glob, command=self.cmd,
+                             out_globs=self.out_glob, command=self.cmd_simple,
                              input_data=self.input_data)
         self.r2 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                              out_globs=self.out_glob, command=self.cmd,
+                              out_globs=self.out_glob, command=self.cmd_complete,
                               input_data=self.input_data,
                               input_string=self.input_string,
                               output_string=self.output_string,
                               flags=self.flags,
                               options=self.options)
-
 
     # def tearDown(self):
     #     path = self.tmp_path+self.id_string
@@ -67,7 +67,7 @@ class localRunnerTestCase(unittest.TestCase):
         self.assertRaises(OSError, localRunner, tmp_id=self.id_string,
                           tmp_path="/blerghalmcblarghel",
                           out_globs=self.out_glob,
-                          command=self.cmd, input_data=self.input_data)
+                          command=self.cmd_simple, input_data=self.input_data)
 
     def test_tmp_id_is_string(self):
         self.assertEqual(self.r.tmp_id, self.id_string)
@@ -76,19 +76,16 @@ class localRunnerTestCase(unittest.TestCase):
         self.assertRaises(TypeError, localRunner, tmp_id=12,
                           tmp_path=self.tmp_path,
                           out_globs=self.out_glob,
-                          command=self.cmd, input_data=self.input_data)
+                          command=self.cmd_simple, input_data=self.input_data)
 
     def test_command_is_string(self):
-        self.assertEqual(self.r.command, self.cmd)
+        self.assertEqual(self.r.command, self.cmd_simple)
 
     def test_command_is_not_string_raises_type_error(self):
         self.assertRaises(TypeError, localRunner, tmp_id=self.id_string,
                           tmp_path=self.tmp_path,
                           out_globs=self.out_glob,
                           command=123, input_data=self.input_data)
-
-    def test_command_is_string(self):
-        self.assertEqual(self.r.command, self.cmd)
 
     def test_input_data_is_dict(self):
         self.assertEqual(self.r.input_data, self.input_data)
@@ -97,11 +94,11 @@ class localRunnerTestCase(unittest.TestCase):
         self.assertRaises(TypeError, localRunner, tmp_id=self.id_string,
                           tmp_path=self.tmp_path,
                           out_globs=self.out_glob,
-                          command=self.cmd, input_data=123)
+                          command=self.cmd_simple, input_data=123)
 
     def test_will_take_blank_input_data(self):
         r3 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                         out_globs=self.out_glob, command=self.cmd)
+                         out_globs=self.out_glob, command=self.cmd_simple)
         self.assertEqual(r3.input_data, None)
 
     def test_out_globs_is_list(self):
@@ -111,11 +108,11 @@ class localRunnerTestCase(unittest.TestCase):
         self.assertRaises(TypeError, localRunner, tmp_id=self.id_string,
                           tmp_path=self.tmp_path,
                           out_globs=123,
-                          command=self.cmd, input_data=self.input_data)
+                          command=self.cmd_simple, input_data=self.input_data)
 
     def test_will_take_blank_out_globs(self):
         r3 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                         command=self.cmd)
+                         command=self.cmd_simple)
         self.assertEqual(r3.out_globs, None)
 
     def test_input_string_is_string(self):
@@ -125,12 +122,12 @@ class localRunnerTestCase(unittest.TestCase):
         self.assertRaises(TypeError, localRunner, tmp_id=self.id_string,
                           tmp_path=self.tmp_path,
                           out_globs=self.out_glob,
-                          command=self.cmd, input_data=self.input_data,
+                          command=self.cmd_complete, input_data=self.input_data,
                           input_string=123)
 
     def test_will_take_blank_input_string(self):
         r2 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                         command=self.cmd)
+                         command=self.cmd_simple)
         self.assertEqual(r2.input_string, None)
 
     def test_raise_if_input_string_but_not_interpolation_control(self):
@@ -140,25 +137,97 @@ class localRunnerTestCase(unittest.TestCase):
                           command="ls", input_data=self.input_data,
                           input_string="huh")
 
+    def test_output_string_is_string(self):
+        self.assertEqual(self.r2.output_string, self.output_string)
 
-    # def testRaisesErrorifDataProvidedButNoinGlob(self):
-    #     """
-    #         Test the non-existing path raises and exception
-    #     """
-    #     self.assertRaises(ValueError, localRunner, tmp_id=self.id_string,
-    #                       tmp_path=self.tmp_path, in_glob=None,
-    #                       out_glob=self.out_glob, command=self.cmd,
-    #                       input_data=self.data)
-    #
-    # def testHappyWithNoinglobAndNoData(self):
-    #     """
-    #         Test the non-existing path raises and exception
-    #     """
-    #     r = localRunner(tmp_id=self.id_string,
-    #                     tmp_path=self.tmp_path, in_glob=None,
-    #                     out_glob=self.out_glob, command=self.cmd,
-    #                     input_data=None)
-    #
+    def test_output_string_is_not_string_raises_type_error(self):
+        self.assertRaises(TypeError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_complete, input_data=self.input_data,
+                          output_string=123)
+
+    def test_will_take_blank_output_string(self):
+        r2 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                         command=self.cmd_simple)
+        self.assertEqual(r2.output_string, None)
+
+    def test_raise_if_output_string_but_not_interpolation_control(self):
+        self.assertRaises(ValueError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls", input_data=self.input_data,
+                          output_string="huh")
+
+    def test_options_is_dict(self):
+        self.assertEqual(self.r2.options, self.options)
+
+    def testoptions_is_not_dict_raises_type_error(self):
+        self.assertRaises(TypeError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_complete, input_data=self.input_data,
+                          options=123)
+
+    def test_will_take_blank_options(self):
+        r2 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                         command=self.cmd_simple)
+        self.assertEqual(r2.options, None)
+
+    def test_raise_if_options_but_not_interpolation_control(self):
+        self.assertRaises(ValueError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls", input_data=self.input_data,
+                          options={"h": "123"})
+
+    def test_flags_is_list(self):
+        self.assertEqual(self.r2.options, self.options)
+
+    def test_flags_is_not_list_raises_type_error(self):
+        self.assertRaises(TypeError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_complete, input_data=self.input_data,
+                          flags=123)
+
+    def test_will_take_blank_flags(self):
+        r2 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                         command=self.cmd_simple)
+        self.assertEqual(r2.options, None)
+
+    def test_raise_if_flags_but_not_interpolation_control(self):
+        self.assertRaises(ValueError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls", input_data=self.input_data,
+                          flags=["h"])
+
+    def test_raise_if_options_ref_but_no_options(self):
+        self.assertRaises(ValueError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls $OPTIONS", input_data=self.input_data)
+
+    def test_raise_if_flags_ref_but_no_flags(self):
+        self.assertRaises(ValueError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls $FLAGS", input_data=self.input_data)
+
+    def test_raise_if_input_ref_but_no_intput_string(self):
+        self.assertRaises(ValueError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls $INPUT", input_data=self.input_data)
+
+    def test_raise_if_output_ref_but_no_output_string(self):
+        self.assertRaises(ValueError, localRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls $OUTPUT", input_data=self.input_data)
+
+
     # def test_translate_command_correctly_interpolate_output(self):
     #     """
     #         test __translated_command works as expected
@@ -308,7 +377,6 @@ class localRunnerTestCase(unittest.TestCase):
     #     self.assertEqual(os.path.exists(self.r.path), False)
     #     self.assertEqual(os.path.exists(self.r.in_path), False)
     #     self.assertEqual(os.path.exists(self.r.out_path), False)
- 
 
 if __name__ == '__main__':
     unittest.main()
