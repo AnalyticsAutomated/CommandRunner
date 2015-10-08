@@ -2,7 +2,7 @@ commandRunner
 =============
 
 commandRunner is yet another package created to handle running commands,
-scripts or programs on the command line. The principle class lets you run
+scripts or programs on the command line. The simplest class lets you run
 anything locally on your machine. Later classes are targetted at Analytics
 and data processing platforms such as Grid Engine and HADOOP. The class
 attempts to run commands in a moderately thread safe way by requiring that
@@ -10,29 +10,29 @@ you provide with sufficient information that it can build a uniquely labelled
 temp directory for all input and output files. This means that this can play
 nicely with things like Celery workers.
 
-Release 0.2
+Release 0.3
 -----------
 
-This release supports running commands on localhost.  It also uses interpolation
-for the commands with the same syntax and python templates
+This release supports running commands on localhost and DRMAA compliant grid
+engine installs (ogs, soge and univa). It also uses interpolation
+for the commands with the same syntax as python templates
 
 Future
 ------
 
-In the future we'll provide classes to run commands over RServe, Grid Engine,
+In the future we'll provide classes to run commands over RServe,
 Hadoop, Octave, and SAS Server.
 
 
 Usage
 -----
-This is the basic usages::
+This is the basic usage::
 
     from commandRunner import *
 
-    r = commandRunner(tmp_id="ID_STRING", tmp_path=,/tmp/"
-                      in_glob=.in", out_glob=.out",
-                      command="ls $FLAGS $OPTIONS /tmp > $OUTPUT",
-                      input_data="STRING OF DATA", flags=[], options={})
+    r = localRunner(tmp_id="ID_STRING", tmp_path=,/tmp/", out_glob=['file'],
+                    command="ls /tmp > $OUTPUT", input_data={DATA_DICT}
+                    input_string="test.file", output_string="out.file")
     r.prepare()
     exit_status = r.run_cmd(success_params=[0])
     r.tidy()
@@ -43,25 +43,35 @@ string interpolation.
 
 r.prepare() builds a temporary directory and makes any input file which is
 needed. In this instance "ID_STRING", and a path where temporary files can be
-placed are used to create a tempdir called /tmp/ID_STRING/. Next it takes and
-string of data and makes and input file given the provided input file ending
-(.in) which would be /tmp/ID_STRING/ID_STRING.in and this file would contain
-"STRING OF DATA".
+placed are used to create a tempdir called /tmp/ID_STRING/.
 
-tmp_id, tmp_path and command are required.
+Next it takes input_data. This is a dict of {Filename:Data_string} values.
+Iterating over, it writes the data to each named file in the tempdir. So the
+following dict::
 
-in_glob is only required if the command contains $INPUT and input data is
-given
+    { "test.file" : "THIS IS MY STRING OF DATA"}
 
-r.run_cmd(success_params=[0]) runs the command string provided. First anything
-labelled $OUTPUT of $INPUT will be replaced with the path to the temporary
-files the process will generate.  In this instance "ls /tmp > $OUTPUT" will
-become "ls /tmp > /tmp/ID_STRING/ID_STRING.out". We can provide an array of
-unix exits statuses we consider to be succesful exists, default is [0]. Any
-command will be run so this is potentially very dangerous. The exit status of
-the command is returned. Flags is an array of strings which will be interpolated
-in to the command strings to replace $FLAGS. options is a dict of string:string
-key:values which will be interpolated to replace $OPTIONS as command line options
+
+would result in a file with the path /tmp/ID_STRING/test.file
+
+out_glob is an array of file suffixes which we want to gather up when the
+command completes.
+
+Not that only tmp_id, tmp_path and command are required. Omitting
+input_data or out_glob assumes that there are respectively no input files to
+write or output files to gather.
+
+The line r.run_cmd(success_params=[0]) runs the command string provided.
+
+The command string supports some limited interpolation. First anything
+labeled $INPUT or $OUTPUT will be replaced with the input_string and
+output_string. $OPTIONS will interpolate a dictionary of switches and values.
+$FLAGS will interpolate an array of flags.
+
+In the given example "ls /tmp > $OUTPUT" will become "ls /tmp > out.file".
+Additionally We can also provide an array of unix exits statuses we consider to
+be successful exists, default is [0]. Any command will be run so this is
+potentially very dangerous. The exit status of the command is returned.
 
 r.tidy() cleans up deleting any input and output files and the temporary
 working directory. Any data in the output file is read in to r.output_data
@@ -76,11 +86,12 @@ Run tests with:
 TODO
 ----
 
-1. Implement rserveRunner for running commands in r
-2. Implement geRunner for running commands on Grid Engine
-3. Implement hadoopRunner for running command on Hadoop
-4. Refactor commandRunner to abstract base class
-5. Move commandRunner tests out of localRunner tests
-6. Implement sasRunner for a SAS backend
-7. Implement octaveRunner for Octave backend
-8. matlab? mathematica?
+1. Support multiple input files and multiple output files
+2. Implement rserveRunner for running commands in r
+3. Implement geRunner for running commands on Grid Engine
+4. Implement hadoopRunner for running command on Hadoop
+5. Refactor commandRunner to abstract base class
+6. Move commandRunner tests out of localRunner tests
+7. Implement sasRunner for a SAS backend
+8. Implement octaveRunner for Octave backend
+9. matlab? mathematica?

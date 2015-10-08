@@ -1,8 +1,6 @@
+__pycache__/*
 *.py[cod]
-*.json
-*~
-DEADJOE
-media/temp
-submissions/*
-__pycache__/
-/*.egg-info
+*$py.class
+commandRunner.egg-info/*
+dist/*
+nose-1.3.7-py3.4.egg/*
