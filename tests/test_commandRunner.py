@@ -135,13 +135,6 @@ class commandRunnerTestCase(unittest.TestCase):
                            command=self.cmd_simple)
         self.assertEqual(r2.input_string, None)
 
-    def test_raise_if_input_string_but_not_interpolation_control(self):
-        self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls", input_data=self.input_data,
-                          input_string="huh")
-
     def test_output_string_is_string(self):
         self.assertEqual(self.r2.output_string, self.output_string)
 
@@ -157,13 +150,6 @@ class commandRunnerTestCase(unittest.TestCase):
         r2 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            command=self.cmd_simple)
         self.assertEqual(r2.output_string, None)
-
-    def test_raise_if_output_string_but_not_interpolation_control(self):
-        self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls", input_data=self.input_data,
-                          output_string="huh")
 
     def test_options_is_dict(self):
         self.assertEqual(self.r2.options, self.options)
@@ -181,13 +167,6 @@ class commandRunnerTestCase(unittest.TestCase):
                            command=self.cmd_simple)
         self.assertEqual(r2.options, None)
 
-    def test_raise_if_options_but_not_interpolation_control(self):
-        self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls", input_data=self.input_data,
-                          options={"h": "123"})
-
     def test_flags_is_list(self):
         self.assertEqual(self.r2.options, self.options)
 
@@ -203,13 +182,6 @@ class commandRunnerTestCase(unittest.TestCase):
         r2 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            command=self.cmd_simple)
         self.assertEqual(r2.options, None)
-
-    def test_raise_if_flags_but_not_interpolation_control(self):
-        self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls", input_data=self.input_data,
-                          flags=["h"])
 
     def test_raise_if_options_ref_but_no_options(self):
         self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
