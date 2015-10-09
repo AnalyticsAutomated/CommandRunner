@@ -65,8 +65,7 @@ class geRunner(commandRunner.commandRunner):
         retval = None
         try:
             with drmaa.Session() as s:
-                pass
-                # jt = s.createJobTemplate(WORKING_DIRECTORY=self.tmp_path)
+                jt = s.createJobTemplate(WORKING_DIRECTORY=self.tmp_path)
                 # jt.remoteCommand = self.command
                 # jt.args = self.args_set
                 # jt.joinFiles = True
@@ -96,6 +95,6 @@ class geRunner(commandRunner.commandRunner):
                 if os.path.isfile(file_path):
                     os.unlink(file_path)
             except Exception as e:
-                print(e)
+                print(str(e))
         if os.path.exists(self.path):
             os.rmdir(self.path)
