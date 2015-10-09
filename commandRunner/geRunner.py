@@ -68,6 +68,7 @@ class geRunner(commandRunner.commandRunner):
                 jt = s.createJobTemplate()
                 jt.workingDirectory = self.tmp_path
                 jt.remoteCommand = self.command
+                raise ValueError(self.command)
                 jt.args = self.args_set
                 jt.joinFiles = True
 
@@ -83,7 +84,7 @@ class geRunner(commandRunner.commandRunner):
                 with open(self.out_path, 'r') as content_file:
                     self.output_data = content_file.read()
         else:
-            raise OSError("Exist status" + str(retval))
+            raise OSError("Exit status" + str(retval))
         return(retval.exitStatus)
 
     def tidy(self):
