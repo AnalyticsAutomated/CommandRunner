@@ -13,7 +13,7 @@ class geRunnerTestCase(unittest.TestCase):
     # REQUIRED
     id_string = "INTERESTING_ID_STRING"
     tmp_path = "/tmp/"
-    cmd_simple = "ls /tmp > output.out"
+    cmd_simple = "/usr/bin/ls /tmp > output.out"
 
     # OPTIONAL
     input_string = "input.in"
@@ -97,8 +97,8 @@ class geRunnerTestCase(unittest.TestCase):
                           out_globs=self.out_glob,
                           command="ls$OUTPUT", input_data=self.input_data)
 
-    def test_space_raises_error(self):
-        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls ", input_data=self.input_data)
+    # def test_space_raises_error(self):
+    #     self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
+    #                       tmp_path=self.tmp_path,
+    #                       out_globs=self.out_glob,
+    #                       command="ls ", input_data=self.input_data)
