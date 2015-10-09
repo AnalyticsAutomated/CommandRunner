@@ -65,7 +65,7 @@ class geRunner(commandRunner.commandRunner):
         retval = None
         try:
             with drmaa.Session() as s:
-                [ass]
+                pass
                 # jt = s.createJobTemplate(WORKING_DIRECTORY=self.tmp_path)
                 # jt.remoteCommand = self.command
                 # jt.args = self.args_set
