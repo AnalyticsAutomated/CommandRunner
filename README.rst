@@ -104,9 +104,8 @@ Run tests with:
 TODO
 ----
 
-1. Support multiple input files and multiple output files
-2. Implement rserveRunner for running commands in r
-3. Implement hadoopRunner for running command on Hadoop
-4. Implement sasRunner for a SAS backend
-5. Implement octaveRunner for Octave backend
-6. matlab? mathematica?
+1. Implement rserveRunner for running commands in r
+2. Implement hadoopRunner for running command on Hadoop
+3. Implement sasRunner for a SAS backend
+4. Implement octaveRunner for Octave backend
+5. matlab? mathematica?
