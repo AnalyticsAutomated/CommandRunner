@@ -64,8 +64,8 @@ class geRunnerTestCase(unittest.TestCase):
     def test_command_executes(self):
         self.r2.prepare()
         exit_status = self.r2.run_cmd()
-        # self.assertEqual(exit_status, 0)
-        # self.assertNotEqual(self.r2.output_data, None)
+        self.assertEqual(exit_status, 0)
+        self.assertNotEqual(self.r2.output_data, None)
 
     def test_flag_and_options_interpolation_does_not_occur(self):
         self.assertEqual(self.r.command, self.cmd_simple)
