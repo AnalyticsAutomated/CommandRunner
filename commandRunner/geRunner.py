@@ -76,7 +76,7 @@ class geRunner(commandRunner.commandRunner):
                 # retval = s.wait(jobid, drmaa.Session.TIMEOUT_WAIT_FOREVER)
                 # s.deleteJobTemplate(jt)
         except Exception as e:
-            raise OSError("DRMAA session failed to execute:" + e)
+            raise OSError("DRMAA session failed to execute:" + str(e))
 
         if retval.exitStatus in success_params:
             if os.path.exists(self.out_path):
