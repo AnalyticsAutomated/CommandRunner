@@ -63,9 +63,8 @@ class geRunner(commandRunner.commandRunner):
             again?)
         '''
         exit_status = None
-        raise ValueError(args_set)
         try:
-            jt = s.createJobTemplate()
+            jt = s.createJobTemplate(WORKING_DIRECTORY=self.tmp_path)
             jt.remoteCommand = self.command
             jt.args = self.args_set
             jt.joinFiles = True
@@ -77,7 +76,7 @@ class geRunner(commandRunner.commandRunner):
         except Exception as e:
             raise OSError("DRMAA session failed to execute")
 
-        if exit_status in success_params:
+        if retval.exitStatus in success_params:
             if os.path.exists(self.out_path):
                 with open(self.out_path, 'r') as content_file:
                     self.output_data = content_file.read()

@@ -32,7 +32,12 @@ class geRunnerTestCase(unittest.TestCase):
                           output_string=self.output_string,
                           flags=self.flags,
                           options=self.options)
-
+        self.r2 = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                           out_globs=self.out_glob,
+                           command=self.cmd_simple,
+                           input_data=self.input_data,
+                           output_string=self.output_string,
+                           )
     # def tearDown(self):
     #     path = self.tmp_path+self.id_string
     #     if os.path.exists(path):
@@ -56,6 +61,13 @@ class geRunnerTestCase(unittest.TestCase):
         file1 = self.tmp_path+self.id_string+"/input.in"
         self.assertEqual(os.path.isdir(path), True)
         self.assertEqual(os.path.exists(file1), True)
+
+    @patch('commandRunner.geRunner.runJob', return_value=1234)
+    @patch('commandRunner.geRunner.wait', return_value=0)
+    def test_command_executes(self, m, n):
+        r2.prepare()
+        r2.run_cmd()
+        r2.
 
     def test_flag_and_options_interpolation_does_not_occur(self):
         self.assertEqual(self.r.command, self.cmd_simple)
