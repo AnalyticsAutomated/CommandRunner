@@ -50,6 +50,13 @@ class geRunnerTestCase(unittest.TestCase):
         self.assertEqual(self.r.args_set, ['input.in', '-lah', '-a', '12',
                                            'b', '1', '> output.out'])
 
+    def test_prepare_correctly_makes_directory_and_file(self):
+        self.r.prepare()
+        path = self.tmp_path+self.id_string
+        file1 = self.tmp_path+self.id_string+"/input.in"
+        self.assertEqual(os.path.isdir(path), True)
+        self.assertEqual(os.path.exists(file1), True)
+
     def test_flag_and_options_interpolation_does_not_occur(self):
         self.assertEqual(self.r.command, self.cmd_simple)
 

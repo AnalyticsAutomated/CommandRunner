@@ -76,6 +76,19 @@ potentially very dangerous. The exit status of the command is returned.
 r.tidy() cleans up deleting any input and output files and the temporary
 working directory. Any data in the output file is read in to r.output_data
 
+Grid Engine Quirks
+------------------
+
+geRunner uses python DRMAA to submit jobs. A consequence of this is that $INPUT,
+$OUTPUT, $FLAGS and $OPTIONS are NOT supported. These are concatenated in to an
+array of arguments that are passed to the command by the DRMAA layer in this
+order:
+
+    [$INPUT, $FLAGS, $OPTIONS, $OUTPUT]
+
+The Options dict is flattened to a key:value list. You can include or omit as
+many of those as you'd like.
+
 Tests
 -----
 
