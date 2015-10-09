@@ -17,7 +17,7 @@ class geRunnerTestCase(unittest.TestCase):
 
     # OPTIONAL
     input_string = "input.in"
-    output_string = "> output.out"
+    output_string = "/tmp > output.out"
     flags = ["-lah", ]
     options = {'-a': '12', 'b': '1'}
     out_glob = ['out', ]
@@ -36,7 +36,7 @@ class geRunnerTestCase(unittest.TestCase):
                            out_globs=self.out_glob,
                            command=self.cmd_simple,
                            input_data=self.input_data,
-                           #output_string=self.output_string,
+                           output_string=self.output_string,
                            )
     # def tearDown(self):
     #     path = self.tmp_path+self.id_string
