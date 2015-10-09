@@ -33,17 +33,17 @@ class geRunnerTestCase(unittest.TestCase):
                           flags=self.flags,
                           options=self.options)
 
-    def tearDown(self):
-        path = self.tmp_path+self.id_string
-        if os.path.exists(path):
-            for this_file in os.listdir(path):
-                file_path = os.path.join(path, this_file)
-                try:
-                    if os.path.isfile(file_path):
-                        os.unlink(file_path)
-                except e:
-                    print(e)
-            os.rmdir(path)
+    # def tearDown(self):
+    #     path = self.tmp_path+self.id_string
+    #     if os.path.exists(path):
+    #         for this_file in os.listdir(path):
+    #             file_path = os.path.join(path, this_file)
+    #             try:
+    #                 if os.path.isfile(file_path):
+    #                     os.unlink(file_path)
+    #             except e:
+    #                 print(e)
+    #         os.rmdir(path)
 
     def test_args_list_is_correct(self):
         self.r.prepare()
