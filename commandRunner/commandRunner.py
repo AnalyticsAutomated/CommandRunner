@@ -28,7 +28,7 @@ class commandRunner():
         self.command = None
         self.input_data = None
         self.command = None
-        self.
+
         self.input_string = None
         self.output_string = None
         self.options = None
