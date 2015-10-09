@@ -48,9 +48,7 @@ class geRunner(commandRunner.commandRunner):
         if self.flags is not None:
             self.args_set.extend(self.flags)
         if self.options is not None:
-            [self.args_set.extend([k, v]) for k, v in sorted(self.options.items())]
-        # if self.output_string is not None:
-        #     self.args_set.append(self.output_string)
+            [self.args_set.extend([k+" "+v]) for k, v in sorted(self.options.items())]
 
     def run_cmd(self, success_params=[0]):
         '''

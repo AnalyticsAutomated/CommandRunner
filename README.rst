@@ -51,7 +51,6 @@ following dict::
 
     { "test.file" : "THIS IS MY STRING OF DATA"}
 
-
 would result in a file with the path /tmp/ID_STRING/test.file
 
 out_glob is an array of file suffixes which we want to gather up when the
@@ -72,6 +71,12 @@ In the given example "ls /tmp > $OUTPUT" will become "ls /tmp > out.file".
 Additionally We can also provide an array of unix exits statuses we consider to
 be successful exists, default is [0]. Any command will be run so this is
 potentially very dangerous. The exit status of the command is returned.
+
+Once complete if ou_globs have been provided and the files were output then
+the contents of those files can be found in the dict r.output_data. which has
+the same form as the input_data dict:
+
+{ "output.file" : "THIS IS MY PROCESSED DATA"}
 
 r.tidy() cleans up deleting any input and output files and the temporary
 working directory. Any data in the output file is read in to r.output_data
