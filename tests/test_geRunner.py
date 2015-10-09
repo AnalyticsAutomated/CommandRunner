@@ -63,7 +63,7 @@ class geRunnerTestCase(unittest.TestCase):
 
     def test_command_executes(self):
         self.r2.prepare()
-        # exit_status = self.r2.run_cmd()
+        exit_status = self.r2.run_cmd()
         # self.assertEqual(exit_status, 0)
         # self.assertNotEqual(self.r2.output_data, None)
 
