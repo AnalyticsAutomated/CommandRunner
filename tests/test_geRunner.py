@@ -52,4 +52,28 @@ class geRunnerTestCase(unittest.TestCase):
         self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
                           tmp_path=self.tmp_path,
                           out_globs=self.out_glob,
-                          command="ls $OPTIONS", input_data=self.input_data)
+                          command="ls$OPTIONS", input_data=self.input_data)
+
+    def test_flags_raises_error(self):
+        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls$FLAGS", input_data=self.input_data)
+
+    def test_input_raises_error(self):
+        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls$INPUT", input_data=self.input_data)
+
+    def test_output_raises_error(self):
+        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls$OUTPUT", input_data=self.input_data)
+
+    def test_space_raises_error(self):
+        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls ", input_data=self.input_data)
