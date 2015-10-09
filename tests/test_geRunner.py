@@ -9,8 +9,6 @@ class geRunnerTestCase(unittest.TestCase):
 
     data = "SOME EXAMPLE DATA"
 
-    r = None
-    r2 = None
     # REQUIRED
     id_string = "INTERESTING_ID_STRING"
     tmp_path = "/tmp/"

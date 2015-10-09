@@ -6,19 +6,6 @@ from subprocess import call
 
 class commandRunner():
 
-    tmp_id = None
-    tmp_path = None
-    out_globs = None
-    command = None
-    input_data = None
-    command = None
-
-    input_string = None
-    output_string = None
-    options = None
-    flags = None
-    output_data = None
-    path = None
 
     def __init__(self, **kwargs):
         '''
@@ -35,7 +22,19 @@ class commandRunner():
             options = {flag:entry}
             flags = [strings,]
         '''
-
+        self.tmp_id = None
+        self.tmp_path = None
+        self.out_globs = None
+        self.command = None
+        self.input_data = None
+        self.command = None
+        self.
+        self.input_string = None
+        self.output_string = None
+        self.options = None
+        self.flags = None
+        self.output_data = None
+        self.path = None
         self.__check_arguments(kwargs)
 
         self.tmp_path = re.sub("/$", '', self.tmp_path)
