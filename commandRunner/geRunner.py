@@ -16,6 +16,8 @@ class geRunner(commandRunner.commandRunner):
             raise ValueError("Grid Engine commands must be single exe names")
         if "$OUTPUT" in kwargs['command']:
             raise ValueError("Grid Engine commands must be single exe names")
+        if " " in kwargs['command']:
+            raise ValueError("Grid Engine commands must be single exe names")
         commandRunner.commandRunner.__init__(self, **kwargs)
 
     def _translate_command(self, command):
@@ -62,13 +64,13 @@ class geRunner(commandRunner.commandRunner):
             s.deleteJobTemplate(jt)
         except Exception as e:
             raise OSError("DRMAA session failed to execute")
-        #
-        # if exit_status in success_params:
-        #     if os.path.exists(self.out_path):
-        #         with open(self.out_path, 'r') as content_file:
-        #             self.output_data = content_file.read()
-        # else:
-        #     raise OSError("Exist status" + str(exit_status))
+
+        if exit_status in success_params:
+            if os.path.exists(self.out_path):
+                with open(self.out_path, 'r') as content_file:
+                    self.output_data = content_file.read()
+        else:
+            raise OSError("Exist status" + str(exit_status))
         return(exit_status)
 
     def tidy(self):

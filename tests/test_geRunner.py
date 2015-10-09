@@ -13,25 +13,25 @@ class geRunnerTestCase(unittest.TestCase):
     # REQUIRED
     id_string = "INTERESTING_ID_STRING"
     tmp_path = "/tmp/"
-    cmd_simple = "ls /tmp > huh"
+    cmd_simple = "ls"
 
     # OPTIONAL
     input_string = "input.in"
     output_string = "output.out"
-    flags = ['-l', '-ah']
+    flags = ['-lah' '> output.out']
     options = {'-a': '12', 'b': '1'}
     out_glob = ['out', ]
     input_data = {"input.in": "SOME EXAMPLE DATA"}
 
     def setUp(self):
-        self.r = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                             out_globs=self.out_glob,
-                             command=self.cmd_simple,
-                             input_data=self.input_data,
-                             input_string=self.input_string,
-                             output_string=self.output_string,
-                             flags=self.flags,
-                             options=self.options)
+        self.r = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_simple,
+                          input_data=self.input_data,
+                          input_string=self.input_string,
+                          output_string=self.output_string,
+                          flags=self.flags,
+                          options=self.options)
 
     def tearDown(self):
         path = self.tmp_path+self.id_string
@@ -46,4 +46,4 @@ class geRunnerTestCase(unittest.TestCase):
             os.rmdir(path)
 
     def test_flag_and_options_interpolation_does_not_occur(self):
-        self.assertEqual(self.r.command)
+        self.assertEqual(self.r.command, self.cmd_simple)
