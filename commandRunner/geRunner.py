@@ -66,15 +66,15 @@ class geRunner(commandRunner.commandRunner):
         try:
             with drmaa.Session() as s:
                 jt = s.createJobTemplate()
-                jt.WORKING_DIRECTORY=self.tmp_path
-                # jt.remoteCommand = self.command
-                # jt.args = self.args_set
-                # jt.joinFiles = True
-                #
-                # jobid = s.runJob(jt)
-                #
-                # retval = s.wait(jobid, drmaa.Session.TIMEOUT_WAIT_FOREVER)
-                # s.deleteJobTemplate(jt)
+                jt.workingDirectory = self.tmp_path
+                jt.remoteCommand = self.command
+                jt.args = self.args_set
+                jt.joinFiles = True
+
+                jobid = s.runJob(jt)
+
+                retval = s.wait(jobid, drmaa.Session.TIMEOUT_WAIT_FOREVER)
+                s.deleteJobTemplate(jt)
         except Exception as e:
             raise OSError("DRMAA session failed to execute:" + str(e))
 
