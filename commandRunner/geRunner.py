@@ -27,10 +27,6 @@ class geRunner(commandRunner.commandRunner):
             takes the command string and substitutes the relevant files names
         '''
         # interpolate the file names if needed
-        if self.output_string is not None:
-            command = command.replace("$OUTPUT", self.output_string)
-        if self.input_string is not None:
-            command = command.replace("$INPUT", self.input_string)
         return(command)
 
     def prepare(self):
