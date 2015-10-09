@@ -65,7 +65,7 @@ class geRunner(commandRunner.commandRunner):
         exit_status = None
         try:
             with drmaa.Session() as s:
-                jt = s.createJobTemplate(WORKING_DIRECTORY=self.tmp_path)
+                # jt = s.createJobTemplate(WORKING_DIRECTORY=self.tmp_path)
                 # jt.remoteCommand = self.command
                 # jt.args = self.args_set
                 # jt.joinFiles = True
