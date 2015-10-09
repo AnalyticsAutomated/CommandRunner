@@ -81,7 +81,7 @@ class geRunner(commandRunner.commandRunner):
         output_dir = os.listdir(self.path)
 
         if retval.exitStatus not in success_params:
-            raise OSError("Exist status" + + str(retval))
+            raise OSError("Exist status" + str(retval))
 
         self.output_data = {}
         for this_glob in self.out_globs:
