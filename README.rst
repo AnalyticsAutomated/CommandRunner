@@ -106,10 +106,7 @@ TODO
 
 1. Support multiple input files and multiple output files
 2. Implement rserveRunner for running commands in r
-3. Implement geRunner for running commands on Grid Engine
-4. Implement hadoopRunner for running command on Hadoop
-5. Refactor commandRunner to abstract base class
-6. Move commandRunner tests out of localRunner tests
-7. Implement sasRunner for a SAS backend
-8. Implement octaveRunner for Octave backend
-9. matlab? mathematica?
+3. Implement hadoopRunner for running command on Hadoop
+4. Implement sasRunner for a SAS backend
+5. Implement octaveRunner for Octave backend
+6. matlab? mathematica?
