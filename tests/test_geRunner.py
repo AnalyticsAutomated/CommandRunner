@@ -65,8 +65,8 @@ class geRunnerTestCase(unittest.TestCase):
     @patch('commandRunner.geRunner.drmaa.Session.runJob', return_value=1234)
     @patch('commandRunner.geRunner.drmaa.Session.wait', return_value=0)
     def test_command_executes(self, m, n):
-        r2.prepare()
-        #exit_status = r2.run_cmd()
+        self.r2.prepare()
+        #exit_status = self.r2.run_cmd()
         #self.assertEqual(exit_status, 0)
         #self.assertNotEqual(r2.output_data, None)
 
