@@ -9,7 +9,7 @@ class geRunner(commandRunner.commandRunner):
 
     def __init__(self, **kwargs):
         self.args_set = []
-        
+
         if "$OPTIONS" in kwargs['command']:
             raise ValueError("Grid Engine commands must be single exe names")
         if "$FLAGS" in kwargs['command']:
@@ -64,7 +64,6 @@ class geRunner(commandRunner.commandRunner):
                 jt = s.createJobTemplate()
                 jt.workingDirectory = self.path
                 jt.remoteCommand = self.command
-                raise ValueError(self.args_set)
                 jt.args = self.args_set
                 jt.joinFiles = True
 
