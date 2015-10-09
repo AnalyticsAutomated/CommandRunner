@@ -44,6 +44,16 @@ class geRunner(commandRunner.commandRunner):
                 fh = open(file_path, 'w')
                 fh.write(self.input_data[key])
                 fh.close()
+                
+        self.args_set = []
+        if self.input_string is not None:
+            self.args_set.append(self.input_string)
+        if self.flags is not None:
+            self.args_set.extend(self.flags)
+        if self.options is not None:
+            [self.args_set.extend([k, v]) for k, v in dict.items()]
+        if self.output_string is not None:
+            self.args_set.append(self.output_string)
 
     def run_cmd(self, success_params=[0]):
         '''
@@ -52,21 +62,11 @@ class geRunner(commandRunner.commandRunner):
             again?)
         '''
         exit_status = None
-        args = []
-        if self.input_string is not None:
-            args.append(self.input_string)
-        if self.flags is not None:
-            args.extend(self.flags)
-        if self.options is not None:
-            [args.extend([k, v]) for k, v in dict.items()]
-        if self.output_string is not None:
-            args.append(self.output_string)
-
-        raise ValueError(args)
+        raise ValueError(args_set)
         try:
             jt = s.createJobTemplate()
             jt.remoteCommand = self.command
-            jt.args = args
+            jt.args = self.args_set
             jt.joinFiles=True
 
             jobid = s.runJob(jt)

@@ -45,6 +45,10 @@ class geRunnerTestCase(unittest.TestCase):
                     print(e)
             os.rmdir(path)
 
+    def test_args_list_is_correct(self):
+        self.r.prepare()
+        self.assertEqual(self.r.args_set, self.cmd_simple)
+
     def test_flag_and_options_interpolation_does_not_occur(self):
         self.assertEqual(self.r.command, self.cmd_simple)
 
