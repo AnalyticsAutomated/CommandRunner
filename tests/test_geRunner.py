@@ -17,8 +17,8 @@ class geRunnerTestCase(unittest.TestCase):
 
     # OPTIONAL
     input_string = "input.in"
-    output_string = "output.out"
-    flags = ["-lah", "> output.out"]
+    output_string = "> output.out"
+    flags = ["-lah", ]
     options = {'-a': '12', 'b': '1'}
     out_glob = ['out', ]
     input_data = {"input.in": "SOME EXAMPLE DATA"}
