@@ -49,8 +49,8 @@ class geRunner(commandRunner.commandRunner):
             self.args_set.extend(self.flags)
         if self.options is not None:
             [self.args_set.extend([k, v]) for k, v in sorted(self.options.items())]
-        if self.output_string is not None:
-            self.args_set.append(self.output_string)
+        # if self.output_string is not None:
+        #     self.args_set.append(self.output_string)
 
     def run_cmd(self, success_params=[0]):
         '''
@@ -63,6 +63,7 @@ class geRunner(commandRunner.commandRunner):
             with drmaa.Session() as s:
                 jt = s.createJobTemplate()
                 jt.workingDirectory = self.path
+                jt.outputPath = self.output_string
                 jt.remoteCommand = self.command
                 jt.args = self.args_set
                 jt.joinFiles = True
