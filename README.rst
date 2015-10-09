@@ -84,10 +84,11 @@ $OUTPUT, $FLAGS and $OPTIONS are NOT supported. These are concatenated in to an
 array of arguments that are passed to the command by the DRMAA layer in this
 order:
 
-    [$INPUT, $FLAGS, $OPTIONS, $OUTPUT]
+    [$INPUT, $FLAGS, $OPTIONS]
 
 The Options dict is flattened to a key:value list. You can include or omit as
-many of those as you'd like.
+many of those as you'd like. The output_string if provided gives a file where
+the Grid Engine thread STDOUT will be sent.
 
 Tests
 -----
