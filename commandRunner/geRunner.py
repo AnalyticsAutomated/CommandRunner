@@ -58,9 +58,9 @@ class geRunner(commandRunner.commandRunner):
         if self.flags is not None:
             args.extend(self.flags)
         if self.options is not None:
-            args.extend([k,v]) for k,v in dict.items()
+            [args.extend([k, v]) for k, v in dict.items()]
         if self.output_string is not None:
-            [args.append(self.output_string)]
+            args.append(self.output_string)
 
         raise ValueError(args)
         try:
