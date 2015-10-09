@@ -52,15 +52,26 @@ class geRunner(commandRunner.commandRunner):
             again?)
         '''
         exit_status = None
+        args = []
+        if self.input_string is not None:
+            args.append(self.input_string)
+        if self.flags is not None:
+            args.extend(self.flags)
+        if self.options is not None:
+            args.extend([k,v]) for k,v in dict.items()
+        if self.output_string is not None:
+            args.append(self.output_string)
+
+        raise ValueError(args)
         try:
             jt = s.createJobTemplate()
-            jt.remoteCommand = os.path.join(os.getcwd(), 'sleeper.sh')
-            jt.joinFiles = True
+            jt.remoteCommand = self.command
+            jt.args = args
+            jt.joinFiles=True
 
             jobid = s.runJob(jt)
 
             retval = s.wait(jobid, drmaa.Session.TIMEOUT_WAIT_FOREVER)
-
             s.deleteJobTemplate(jt)
         except Exception as e:
             raise OSError("DRMAA session failed to execute")
