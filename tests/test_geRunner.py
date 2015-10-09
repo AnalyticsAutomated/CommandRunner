@@ -13,11 +13,11 @@ class geRunnerTestCase(unittest.TestCase):
     # REQUIRED
     id_string = "INTERESTING_ID_STRING"
     tmp_path = "/tmp/"
-    cmd_simple = "ls"
+    cmd_simple = "ls /tmp > output.out"
 
     # OPTIONAL
     input_string = "input.in"
-    output_string = "/tmp > output.out"
+    output_string = "> output.out"
     flags = ["-lah", ]
     options = {'-a': '12', 'b': '1'}
     out_glob = ['out', ]
@@ -53,7 +53,7 @@ class geRunnerTestCase(unittest.TestCase):
     def test_args_list_is_correct(self):
         self.r.prepare()
         self.assertEqual(self.r.args_set, ['input.in', '-lah', '-a', '12',
-                                           'b', '1', '/tmp > output.out'])
+                                           'b', '1', '> output.out'])
 
     def test_prepare_correctly_makes_directory_and_file(self):
         self.r.prepare()
