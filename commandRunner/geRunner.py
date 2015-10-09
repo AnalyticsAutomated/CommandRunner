@@ -66,7 +66,7 @@ class geRunner(commandRunner.commandRunner):
         try:
             with drmaa.Session() as s:
                 jt = s.createJobTemplate()
-                jt.workingDirectory = self.tmp_path
+                jt.workingDirectory = self.path
                 jt.remoteCommand = self.command
                 jt.args = self.args_set
                 jt.joinFiles = True
@@ -78,12 +78,18 @@ class geRunner(commandRunner.commandRunner):
         except Exception as e:
             raise OSError("DRMAA session failed to execute: " + str(e))
 
-        if retval.exitStatus in success_params:
-            if os.path.exists(self.out_path):
-                with open(self.out_path, 'r') as content_file:
-                    self.output_data = content_file.read()
-        else:
-            raise OSError("Exit status" + str(retval))
+        output_dir = os.listdir(self.path)
+
+        if retval.exitStatus not in success_params:
+            raise OSError("Exist status" + + str(retval))
+
+        self.output_data = {}
+        for this_glob in self.out_globs:
+            for outfile in output_dir:
+                if outfile.endswith(this_glob):
+                    with open(self.path+outfile, 'r') as content_file:
+                        self.output_data[outfile] = content_file.read()
+
         return(retval.exitStatus)
 
     def tidy(self):
