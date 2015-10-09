@@ -62,9 +62,10 @@ class geRunner(commandRunner.commandRunner):
             If exit is 0 then pass back if not decide what to do next. (try
             again?)
         '''
-        exit_status = None
+        retval = None
         try:
             with drmaa.Session() as s:
+                [ass]
                 # jt = s.createJobTemplate(WORKING_DIRECTORY=self.tmp_path)
                 # jt.remoteCommand = self.command
                 # jt.args = self.args_set
