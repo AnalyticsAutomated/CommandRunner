@@ -62,8 +62,8 @@ class geRunnerTestCase(unittest.TestCase):
         self.assertEqual(os.path.isdir(path), True)
         self.assertEqual(os.path.exists(file1), True)
 
-    @patch('commandRunner.geRunner.drmaa.Session.runJob', return_value=1234)
-    @patch('commandRunner.geRunner.drmaa.Session.wait', return_value=0)
+    #@patch('commandRunner.geRunner.drmaa.Session.runJob', return_value=1234)
+    #@patch('commandRunner.geRunner.drmaa.Session.wait', return_value=0)
     def test_command_executes(self, m, n):
         self.r2.prepare()
         exit_status = self.r2.run_cmd()
