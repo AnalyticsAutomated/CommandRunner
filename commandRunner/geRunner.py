@@ -68,7 +68,6 @@ class geRunner(commandRunner.commandRunner):
                 jt = s.createJobTemplate()
                 jt.workingDirectory = self.tmp_path
                 jt.remoteCommand = self.command
-                raise ValueError(self.command)
                 jt.args = self.args_set
                 jt.joinFiles = True
 
