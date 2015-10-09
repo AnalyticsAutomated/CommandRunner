@@ -62,7 +62,7 @@ class geRunnerTestCase(unittest.TestCase):
         self.assertEqual(os.path.isdir(path), True)
         self.assertEqual(os.path.exists(file1), True)
 
-    @patch(commandRunner.geRunner.drmaa, "runJob", return_value=1234)
+    @patch(drmaa, "runJob", return_value=1234)
     #@patch(commandRunner.geRunner.drmaa, "wait",  return_value=0)
     def test_command_executes(self, m, n):
         r2.prepare()
