@@ -7,7 +7,7 @@ from commandRunner import commandRunner
 
 class geRunner(commandRunner.commandRunner):
 
-    self.args_set = []
+    args_set = []
 
     def __init__(self, **kwargs):
         if "$OPTIONS" in kwargs['command']:
