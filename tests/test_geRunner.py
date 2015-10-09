@@ -16,7 +16,7 @@ class geRunnerTestCase(unittest.TestCase):
 
     # OPTIONAL
     input_string = "input.in"
-    output_string = "> output.out"
+    output_string = "output.out"
     flags = ["-lah", ]
     options = {'-a': '12', 'b': '1'}
     out_glob = ['out', ]
@@ -52,7 +52,7 @@ class geRunnerTestCase(unittest.TestCase):
     def test_args_list_is_correct(self):
         self.r.prepare()
         self.assertEqual(self.r.args_set, ['input.in', '-lah', '-a', '12',
-                                           'b', '1', '> output.out'])
+                                           'b', '1'])
 
     def test_prepare_correctly_makes_directory_and_file(self):
         self.r.prepare()
