@@ -36,7 +36,6 @@ class geRunnerTestCase(unittest.TestCase):
                            command=self.cmd_simple,
                            input_data=self.input_data,
                            output_string=self.output_string,
-                           options=None
                            )
     # def tearDown(self):
     #     path = self.tmp_path+self.id_string
