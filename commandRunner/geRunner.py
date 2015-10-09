@@ -83,7 +83,7 @@ class geRunner(commandRunner.commandRunner):
                 with open(self.out_path, 'r') as content_file:
                     self.output_data = content_file.read()
         else:
-            raise OSError("Exist status" + str(exit_status))
+            raise OSError("Exist status" + str(retval))
         return(retval.exitStatus)
 
     def tidy(self):
