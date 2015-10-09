@@ -79,9 +79,14 @@ working directory. Any data in the output file is read in to r.output_data
 Tests
 -----
 
+Best to run these 1 suite at a time, geRunner tests will fail if you do not
+have ogs installed and DRMAA_LIBRARY_PATH set
+
 Run tests with:
 
-    python setup.py test
+    python setup.py test -s tests/test_commandRunner.py
+    python setup.py test -s tests/test_localRunner.py
+    python setup.py test -s tests/test_geRunner.py
 
 TODO
 ----

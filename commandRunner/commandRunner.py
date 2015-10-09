@@ -41,7 +41,7 @@ class commandRunner():
         self.tmp_path = re.sub("/$", '', self.tmp_path)
         self.path = self.tmp_path+"/"+self.tmp_id+"/"
 #       self.command = self.__translate_command(kwargs.pop('command', ''))
-        self.command = self.__translate_command(self.command)
+        self.command = self._translate_command(self.command)
 
     def __check_arguments(self, kwargs):
         # flags = (strings,)
@@ -120,7 +120,7 @@ class commandRunner():
             raise ValueError("Command string references $OUTPUT but no"
                              "output_string provided")
 
-    def __translate_command(self, command):
+    def _translate_command(self, command):
         '''
             takes the command string and substitutes the relevant files names
         '''

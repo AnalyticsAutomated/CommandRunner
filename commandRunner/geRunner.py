@@ -10,6 +10,17 @@ class geRunner(commandRunner.commandRunner):
     def __init__(self, **kwargs):
         commandRunner.commandRunner.__init__(self, **kwargs)
 
+    def _translate_command(self, command):
+        '''
+            takes the command string and substitutes the relevant files names
+        '''
+        # interpolate the file names if needed
+        if self.output_string is not None:
+            command = command.replace("$OUTPUT", self.output_string)
+        if self.input_string is not None:
+            command = command.replace("$INPUT", self.input_string)
+        return(command)
+        
     def prepare(self):
         '''
             Makes a directory and then moves the input data file there
@@ -31,13 +42,18 @@ class geRunner(commandRunner.commandRunner):
             again?)
         '''
         exit_status = None
-        # try:
-        # Open session
-        # Send command, with resource and time set correctly
-        # Wait
-        #
-        # except Exception as e:
-        #     raise OSError("DRMAA session failed to execute")
+        try:
+            jt = s.createJobTemplate()
+            jt.remoteCommand = os.path.join(os.getcwd(), 'sleeper.sh')
+            jt.joinFiles = True
+
+            jobid = s.runJob(jt)
+
+            retval = s.wait(jobid, drmaa.Session.TIMEOUT_WAIT_FOREVER)
+
+            s.deleteJobTemplate(jt)
+        except Exception as e:
+            raise OSError("DRMAA session failed to execute")
         #
         # if exit_status in success_params:
         #     if os.path.exists(self.out_path):

@@ -6,4 +6,6 @@ from commandRunner.geRunner import *
 
 
 class geRunnerTestCase(unittest.TestCase):
-    pass
+
+    def test_flag_and_options_interpolation_does_not_occur(self):
+        pass
