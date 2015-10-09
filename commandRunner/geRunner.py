@@ -7,6 +7,8 @@ from commandRunner import commandRunner
 
 class geRunner(commandRunner.commandRunner):
 
+    self.args_set = []
+
     def __init__(self, **kwargs):
         if "$OPTIONS" in kwargs['command']:
             raise ValueError("Grid Engine commands must be single exe names")
@@ -44,8 +46,7 @@ class geRunner(commandRunner.commandRunner):
                 fh = open(file_path, 'w')
                 fh.write(self.input_data[key])
                 fh.close()
-                
-        self.args_set = []
+
         if self.input_string is not None:
             self.args_set.append(self.input_string)
         if self.flags is not None:
