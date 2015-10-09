@@ -6,7 +6,6 @@ from subprocess import call
 
 class commandRunner():
 
-
     def __init__(self, **kwargs):
         '''
             Constructs a local job
@@ -35,6 +34,7 @@ class commandRunner():
         self.flags = None
         self.output_data = None
         self.path = None
+
         self.__check_arguments(kwargs)
 
         self.tmp_path = re.sub("/$", '', self.tmp_path)
