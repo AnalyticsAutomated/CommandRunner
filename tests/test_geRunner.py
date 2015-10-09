@@ -47,3 +47,9 @@ class geRunnerTestCase(unittest.TestCase):
 
     def test_flag_and_options_interpolation_does_not_occur(self):
         self.assertEqual(self.r.command, self.cmd_simple)
+
+    def test_options_raises_error(self):
+        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command="ls $OPTIONS", input_data=self.input_data)
