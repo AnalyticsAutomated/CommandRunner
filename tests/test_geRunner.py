@@ -53,7 +53,7 @@ class geRunnerTestCase(unittest.TestCase):
     def test_args_list_is_correct(self):
         self.r.prepare()
         self.assertEqual(self.r.args_set, ['input.in', '-lah', '-a', '12',
-                                           'b', '1', '> output.out'])
+                                           'b', '1', '/tmp > output.out'])
 
     def test_prepare_correctly_makes_directory_and_file(self):
         self.r.prepare()
