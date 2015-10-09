@@ -8,7 +8,14 @@ from commandRunner import commandRunner
 class geRunner(commandRunner.commandRunner):
 
     def __init__(self, **kwargs):
-        if "$OPTIONS" in kwargs['command']
+        if "$OPTIONS" in kwargs['command']:
+            raise ValueError("Grid Engine commands must be single exe names")
+        if "$FLAGS" in kwargs['command']:
+            raise ValueError("Grid Engine commands must be single exe names")
+        if "$INPUT" in kwargs['command']:
+            raise ValueError("Grid Engine commands must be single exe names")
+        if "$OUTPUT" in kwargs['command']:
+            raise ValueError("Grid Engine commands must be single exe names")
         commandRunner.commandRunner.__init__(self, **kwargs)
 
     def _translate_command(self, command):
