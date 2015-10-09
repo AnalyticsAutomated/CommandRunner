@@ -77,35 +77,23 @@ class commandRunner():
                 self.input_string = kwargs.pop('input_string', '')
             else:
                 raise TypeError('input_string must be str')
-            if "$INPUT" not in self.command:
-                raise ValueError("input_string provided but no $INPUT in "
-                                 "command string")
         if 'output_string' in kwargs:
             if isinstance(kwargs['output_string'], str):
                 self.output_string = kwargs.pop('output_string', '')
             else:
                 raise TypeError('output_string must be str')
-            if "$OUTPUT" not in self.command:
-                raise ValueError("output_string provided but no $OUTPUT in "
-                                 "command string")
 
         if 'options' in kwargs:
             if isinstance(kwargs['options'], dict):
                 self.options = kwargs.pop('options', '')
             else:
                 raise TypeError('options must be dict')
-            if "$OPTIONS" not in self.command:
-                raise ValueError("options provided but no $OPTIONS in "
-                                 "command string")
 
         if 'flags' in kwargs:
             if isinstance(kwargs['flags'], list):
                 self.flags = kwargs.pop('flags', '')
             else:
                 raise TypeError('flags must be list')
-            if "$FLAGS" not in self.command:
-                raise ValueError("flags provided but no $FLAGS in "
-                                 "command string")
 
         if "$OPTIONS" in self.command and self.options is None:
             raise ValueError("Command string references $OPTIONS but no"

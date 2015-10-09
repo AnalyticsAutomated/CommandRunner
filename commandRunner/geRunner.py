@@ -8,6 +8,7 @@ from commandRunner import commandRunner
 class geRunner(commandRunner.commandRunner):
 
     def __init__(self, **kwargs):
+        if "$OPTIONS" in kwargs['command']
         commandRunner.commandRunner.__init__(self, **kwargs)
 
     def _translate_command(self, command):
@@ -20,7 +21,7 @@ class geRunner(commandRunner.commandRunner):
         if self.input_string is not None:
             command = command.replace("$INPUT", self.input_string)
         return(command)
-        
+
     def prepare(self):
         '''
             Makes a directory and then moves the input data file there

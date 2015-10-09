@@ -7,5 +7,43 @@ from commandRunner.geRunner import *
 
 class geRunnerTestCase(unittest.TestCase):
 
+    data = "SOME EXAMPLE DATA"
+
+    r = None
+    # REQUIRED
+    id_string = "INTERESTING_ID_STRING"
+    tmp_path = "/tmp/"
+    cmd_simple = "ls /tmp > huh"
+
+    # OPTIONAL
+    input_string = "input.in"
+    output_string = "output.out"
+    flags = ['-l', '-ah']
+    options = {'-a': '12', 'b': '1'}
+    out_glob = ['out', ]
+    input_data = {"input.in": "SOME EXAMPLE DATA"}
+
+    def setUp(self):
+        self.r = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                             out_globs=self.out_glob,
+                             command=self.cmd_simple,
+                             input_data=self.input_data,
+                             input_string=self.input_string,
+                             output_string=self.output_string,
+                             flags=self.flags,
+                             options=self.options)
+
+    def tearDown(self):
+        path = self.tmp_path+self.id_string
+        if os.path.exists(path):
+            for this_file in os.listdir(path):
+                file_path = os.path.join(path, this_file)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                except e:
+                    print(e)
+            os.rmdir(path)
+
     def test_flag_and_options_interpolation_does_not_occur(self):
-        pass
+        self.assertEqual(self.r.command)
