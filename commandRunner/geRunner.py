@@ -19,7 +19,7 @@ class geRunner(commandRunner.commandRunner):
         if "$OUTPUT" in kwargs['command']:
             raise ValueError("Grid Engine commands must be single exe names")
         if " " in kwargs['command']:
-             raise ValueError("Grid Engine commands must be single exe names")
+            raise ValueError("Grid Engine commands must be single exe names")
         commandRunner.commandRunner.__init__(self, **kwargs)
 
     def _translate_command(self, command):
@@ -61,7 +61,7 @@ class geRunner(commandRunner.commandRunner):
             with drmaa.Session() as s:
                 jt = s.createJobTemplate()
                 jt.workingDirectory = self.path
-                jt.outputPath = self.output_string
+                jt.outputPath = ":"+self.output_string
                 jt.remoteCommand = self.command
                 jt.args = self.args_set
                 jt.joinFiles = False
