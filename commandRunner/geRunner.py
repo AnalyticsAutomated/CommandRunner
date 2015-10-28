@@ -35,8 +35,10 @@ class geRunner(commandRunner.commandRunner):
         '''
         # we run through the flags list and, params dict and replace $INPUT
         # with input_string and $OUTPUT with output_string
-        self.args_set = [a.replace('$INPUT',  self.input_string) for a in self.args_set]
-        self.args_set = [a.replace('$OUTPUT', self.output_string) for a in self.args_set]
+        if self.input_string is not None:
+          self.args_set = [a.replace('$INPUT',  self.input_string) for a in self.args_set]
+        if self.output_string is not None:
+          self.args_set = [a.replace('$OUTPUT', self.output_string) for a in self.args_set]
         return(command)
 
     def prepare(self):
