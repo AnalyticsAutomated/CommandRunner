@@ -22,6 +22,9 @@ class geRunnerTestCase(unittest.TestCase):
     out_glob = ['out', ]
     input_data = {"input.in": "SOME EXAMPLE DATA"}
     std_out = ":std.out"
+    interpolation_flags = ["-lah", "$INPUT", "$INPUT", "$OUTPUT"]
+    interpolation_options = {'-a': '12', '$INPUT': '$OUTPUT',
+                             '$OUTPUT': '$OUTPUT'}
 
     def setUp(self):
         self.r = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
@@ -42,6 +45,16 @@ class geRunnerTestCase(unittest.TestCase):
                            flags=self.flags,
                            std_out_string=self.std_out
                            )
+        self.r3 = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                           out_globs=self.out_glob,
+                           command=self.cmd_simple,
+                           input_data=self.input_data,
+                           input_string=self.input_string,
+                           output_string=self.output_string,
+                           flags=self.interpolation_flags,
+                           options=self.interpolation_options,
+                           std_out_string=self.std_out
+                           )
 
     def tearDown(self):
         path = self.tmp_path+self.id_string
@@ -55,10 +68,15 @@ class geRunnerTestCase(unittest.TestCase):
                     print(e)
             os.rmdir(path)
 
-    def test_args_list_is_correct(self):
+    def test_args_list_is_correct_without_interpolation(self):
         self.r.prepare()
-        self.assertEqual(self.r.args_set, ['input.in', '-lah', '-a 12',
+        self.assertEqual(self.r.args_set, [-lah', '-a 12',
                                            'b 1'])
+
+    def test_args_list_is_correct_with_interpolation(self):
+        self.r3.prepare()
+        self.assertEqual(self.r3.args_set, [-lah', '-a 12',
+                                            'b 1'])
 
     def test_prepare_correctly_makes_directory_and_file(self):
         self.r.prepare()
