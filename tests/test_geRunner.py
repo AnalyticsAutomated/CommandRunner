@@ -75,8 +75,13 @@ class geRunnerTestCase(unittest.TestCase):
 
     def test_args_list_is_correct_with_interpolation(self):
         self.r3.prepare()
-        self.assertEqual(self.r3.args_set, ['-lah', '-a 12',
-                                            'b 1'])
+        self.assertEqual(self.r3.args_set, ['-lah',
+                                            'input.in',
+                                            'input.in',
+                                            'outfile.out',
+                                            'input.in outfile.out',
+                                            'outfile.out outfile.out',
+                                            '-a 12'])
 
     def test_prepare_correctly_makes_directory_and_file(self):
         self.r.prepare()
