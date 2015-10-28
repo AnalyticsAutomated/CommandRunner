@@ -9,6 +9,7 @@ class geRunner(commandRunner.commandRunner):
 
     def __init__(self, **kwargs):
         self.args_set = []
+        self.std_out_string = ""
 
         if "$OPTIONS" in kwargs['command']:
             raise ValueError("Grid Engine commands must be single exe names")
@@ -20,13 +21,22 @@ class geRunner(commandRunner.commandRunner):
             raise ValueError("Grid Engine commands must be single exe names")
         if " " in kwargs['command']:
             raise ValueError("Grid Engine commands must be single exe names")
+
+        if isinstance(kwargs['std_out_string'], str):
+            self.std_out_string = kwargs.pop('std_out_string', '')
+        else:
+            raise TypeError('std_out_string must be a string')
+
         commandRunner.commandRunner.__init__(self, **kwargs)
 
     def _translate_command(self, command):
         '''
             takes the command string and substitutes the relevant files names
         '''
-        # interpolate the file names if needed
+        # we run through the flags list and, params dict and replace $INPUT
+        # with input_string and $OUTPUT with output_string
+        self.args_set = [a.replace('$INPUT',  self.input_string) for a in self.args_set]
+        self.args_set = [a.replace('$OUTPUT', self.output_string) for a in self.args_set]
         return(command)
 
     def prepare(self):
@@ -43,12 +53,11 @@ class geRunner(commandRunner.commandRunner):
                 fh.write(self.input_data[key])
                 fh.close()
 
-        if self.input_string is not None:
-            self.args_set.append(self.input_string)
         if self.flags is not None:
             self.args_set.extend(self.flags)
         if self.options is not None:
             [self.args_set.extend([k+" "+v]) for k, v in sorted(self.options.items())]
+        self.command = self._translate_command(self.command)
 
     def run_cmd(self, success_params=[0]):
         '''
@@ -89,7 +98,7 @@ class geRunner(commandRunner.commandRunner):
 
     def tidy(self):
         '''
-            Delete everything in the tmp dir and then remove the tjmp dir
+            Delete everything in the tmp dir and then remove the tmp dir
         '''
         for this_file in os.listdir(self.path):
             file_path = os.path.join(self.path, this_file)

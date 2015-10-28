@@ -28,7 +28,7 @@ Usage
 -----
 This is the basic usage::
 
-    from commandRunner import *
+    from commandRunner.localRunner import *
 
     r = localRunner(tmp_id="ID_STRING", tmp_path=,/tmp/", out_glob=['file'],
                     command="ls /tmp > $OUTPUT", input_data={DATA_DICT}
@@ -85,15 +85,35 @@ Grid Engine Quirks
 ------------------
 
 geRunner uses python DRMAA to submit jobs. A consequence of this is that $INPUT,
-$OUTPUT, $FLAGS and $OPTIONS are NOT supported. These are concatenated in to an
-array of arguments that are passed to the command by the DRMAA layer in this
-order:
+$OUTPUT, $FLAGS and $OPTIONS in the command string is NOT supported as per
+local runner. Instead the Flag and Options passed are flattened to an args array
 
-    [$INPUT, $FLAGS, $OPTIONS]
+    [$FLAGS, $OPTIONS]
 
 The Options dict is flattened to a key:value list. You can include or omit as
-many of those as you'd like. The output_string if provided gives a file where
-the Grid Engine thread STDOUT will be sent.
+many of those as you'd like options as you like. Any instance of the string
+$INPUT and $OUTPUT in the args array with be interpolated for the input_string
+and output_string respectively
+
+If std_out_string is provided it will be used as
+a file where the Grid Engine thread STDOUT will be captured.
+
+
+    from commandRunner.geRunner import *
+
+    r = localRunner(tmp_id="ID_STRING", tmp_path=,/tmp/", out_glob=['file'],
+                    command="ls", input_data={"File.txt": "DATA"},
+                    options = {"-file": "$OUTPUT"},
+                    input_string="test.file", output_string="out.file"
+                    std_out_string="std.out")
+    r.prepare()
+    exit_status = r.run_cmd(success_params=[0])
+    r.tidy()
+    print(r.output_data)
+
+Following the interpolation rules this will effectively run the following command
+
+   ls -file out.file > std.out
 
 Tests
 -----
