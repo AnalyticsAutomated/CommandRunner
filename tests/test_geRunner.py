@@ -31,7 +31,7 @@ class geRunnerTestCase(unittest.TestCase):
                           input_string=self.input_string,
                           output_string=self.output_string,
                           flags=self.flags,
-                          options=self.options
+                          options=self.options,
                           std_out_string=self.std_out
                           )
         self.r2 = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
@@ -39,7 +39,7 @@ class geRunnerTestCase(unittest.TestCase):
                            command=self.cmd_simple,
                            input_data=self.input_data,
                            output_string=self.output_string,
-                           flags=self.flags
+                           flags=self.flags,
                            std_out_string=self.std_out
                            )
 
