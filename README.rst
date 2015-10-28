@@ -111,7 +111,8 @@ a file where the Grid Engine thread STDOUT will be captured.
     r.tidy()
     print(r.output_data)
 
-Following the interpolation rules this will effectively run the following command
+Following the interpolation rules, although DRMAA functions differently you can
+think of this as effectively run the following command
 
    ls -file out.file > std.out
 
