@@ -9,7 +9,7 @@ class geRunner(commandRunner.commandRunner):
 
     def __init__(self, **kwargs):
         self.args_set = []
-        self.std_out_string = ""
+        self.std_out_string = None
 
         if "$OPTIONS" in kwargs['command']:
             raise ValueError("Grid Engine commands must be single exe names")

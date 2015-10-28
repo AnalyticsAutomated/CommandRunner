@@ -16,11 +16,12 @@ class geRunnerTestCase(unittest.TestCase):
 
     # OPTIONAL
     input_string = "input.in"
-    output_string = ":output.out"
+    output_string = "outfile.out"
     flags = ["-lah", ]
     options = {'-a': '12', 'b': '1'}
     out_glob = ['out', ]
     input_data = {"input.in": "SOME EXAMPLE DATA"}
+    std_out = ":std.out"
 
     def setUp(self):
         self.r = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
@@ -30,13 +31,16 @@ class geRunnerTestCase(unittest.TestCase):
                           input_string=self.input_string,
                           output_string=self.output_string,
                           flags=self.flags,
-                          options=self.options)
+                          options=self.options
+                          std_out_string=self.std_out
+                          )
         self.r2 = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            out_globs=self.out_glob,
                            command=self.cmd_simple,
                            input_data=self.input_data,
                            output_string=self.output_string,
                            flags=self.flags
+                           std_out_string=self.std_out
                            )
 
     def tearDown(self):
