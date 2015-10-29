@@ -3,19 +3,19 @@ commandRunner
 
 commandRunner is yet another package created to handle running commands,
 scripts or programs on the command line. The simplest class lets you run
-anything locally on your machine. Later classes are targetted at Analytics
+anything locally on your machine. Later classes are targeted at Analytics
 and data processing platforms such as Grid Engine and HADOOP. The class
 attempts to run commands in a moderately thread safe way by requiring that
-you provide with sufficient information that it can build a uniquely labelled
-temp directory for all input and output files. This means that this can play
+you provide with sufficient information that it can build a uniquely labeled
+tmp directory for all input and output files. This means that this can play
 nicely with things like Celery workers.
 
-Release 0.3
+Release 0.4
 -----------
 
 This release supports running commands on localhost and DRMAA compliant grid
-engine installs (ogs, soge and univa). It also uses interpolation
-for the commands with the same syntax as python templates
+engine installs (ogs, soge and univa). Commands are built/interpolated via
+some simple rules.
 
 Future
 ------
@@ -30,9 +30,8 @@ This is the basic usage::
 
     from commandRunner.localRunner import *
 
-    r = localRunner(tmp_id="ID_STRING", tmp_path=,/tmp/", out_glob=['file'],
-                    command="ls /tmp > $OUTPUT", input_data={DATA_DICT}
-                    input_string="test.file", output_string="out.file")
+    r = localRunner(tmp_id="ID_STRING", tmp_path=,/tmp/", out_glob=['file', ],
+                    command="ls /tmp", input_data={DATA_DICT})
     r.prepare()
     exit_status = r.run_cmd(success_params=[0])
     r.tidy()
@@ -41,13 +40,37 @@ This is the basic usage::
 __init__ initalises all the class variables needed and performs the command
 string interpolation.
 
+Interpolation rules work the following way. The command string is split in to
+tokens if you provide a list of flags or a dict of options theses are inserted
+between the 0th and 1st token. So if you call with the following. If you
+provide a std_out_str then an appropriate redirection will be added to the
+end of your command string:
+
+    r = localRunner(tmp_id="ID_STRING",
+                    tmp_path=,/tmp/",
+                    out_glob=['file', ],
+                    flags=["-a","-l"]
+                    options={"b", "this"}
+                    command="ls /tmp",
+                    input_data={DATA_DICT},
+                    str_out_str="file.stdout")
+
+You will effectively build the following command:
+
+      ls -a -l b this /tmp > file.stdout
+
+The command string builing supports some limited interpolation. Anything
+labeled $INPUT or $OUTPUT will be replaced with the input_string and
+output_string if you provide them on intialisation.
+
 r.prepare() builds a temporary directory and makes any input file which is
-needed. In this instance "ID_STRING", and a path where temporary files can be
-placed are used to create a tempdir called /tmp/ID_STRING/.
+needed. In the example given tmp_id="ID_STRING", specifies a path where
+temporary files can be placed are used eith tmp_path to create a tempdir
+called /tmp/ID_STRING/.
 
 Next it takes input_data. This is a dict of {Filename:Data_string} values.
-Iterating over, it writes the data to each named file in the tempdir. So the
-following dict::
+Iterating over, it writes the data to a file after the key in the tempdir. So
+the following dict:
 
     { "test.file" : "THIS IS MY STRING OF DATA"}
 
@@ -56,39 +79,28 @@ would result in a file with the path /tmp/ID_STRING/test.file
 out_glob is an array of file suffixes which we want to gather up when the
 command completes.
 
-Not that only tmp_id, tmp_path and command are required. Omitting
+Note that only tmp_id, tmp_path and command are required. Omitting
 input_data or out_glob assumes that there are respectively no input files to
 write or output files to gather.
 
 The line r.run_cmd(success_params=[0]) runs the command string provided.
 
-The command string supports some limited interpolation. First anything
-labeled $INPUT or $OUTPUT will be replaced with the input_string and
-output_string. $OPTIONS will interpolate a dictionary of switches and values.
-$FLAGS will interpolate an array of flags.
-
-In the given example "ls /tmp > $OUTPUT" will become "ls /tmp > out.file".
-Additionally We can also provide an array of unix exits statuses we consider to
-be successful exists, default is [0]. Any command will be run so this is
-potentially very dangerous. The exit status of the command is returned.
-
-Once complete if ou_globs have been provided and the files were output then
+Once complete if out_globs have been provided and the files were output then
 the contents of those files can be found in the dict r.output_data. which has
-the same form as the input_data dict:
+the same {Filename:Data_string} form as the input_data dict:
 
 { "output.file" : "THIS IS MY PROCESSED DATA"}
 
 r.tidy() cleans up deleting any input and output files and the temporary
-working directory. Any data in the output file is read in to r.output_data
+working directory. Any data in the output file is available in to r.output_data
 
 Grid Engine Quirks
 ------------------
 
-geRunner uses python DRMAA to submit jobs. A consequence of this is that $INPUT,
-$OUTPUT, $FLAGS and $OPTIONS in the command string is NOT supported as per
-local runner. Instead the Flag and Options passed are flattened to an args array
-
-    [$FLAGS, $OPTIONS]
+geRunner uses python DRMAA to submit jobs. A consequence of this a command
+string is not constructed in quite the same way. The first portion of the
+command string is split off as a command. Subsequence portions are tokenised
+and added to a params array to be passed to DRMAA
 
 The Options dict is flattened to a key:value list. You can include or omit as
 many of those as you'd like options as you like. Any instance of the string
@@ -101,11 +113,11 @@ a file where the Grid Engine thread STDOUT will be captured.
 
     from commandRunner.geRunner import *
 
-    r = localRunner(tmp_id="ID_STRING", tmp_path=,/tmp/", out_glob=['file'],
-                    command="ls", input_data={"File.txt": "DATA"},
-                    options = {"-file": "$OUTPUT"},
-                    input_string="test.file", output_string="out.file"
-                    std_out_string="std.out")
+    r = geRunner(tmp_id="ID_STRING", tmp_path=,/tmp/", out_glob=['file'],
+                 command="ls -lah", input_data={"File.txt": "DATA"},
+                 options = {"-file": "$OUTPUT"},
+                 input_string="test.file", output_string="out.file"
+                 std_out_string="std.out")
     r.prepare()
     exit_status = r.run_cmd(success_params=[0])
     r.tidy()
@@ -114,7 +126,7 @@ a file where the Grid Engine thread STDOUT will be captured.
 Although DRMAA functions differently you can think of this as effectively
 run the following command (after following the interpolation rules)
 
-   ls -file out.file > std.out
+   ls -file out.file -lah > std.out
 
 Tests
 -----

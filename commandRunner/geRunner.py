@@ -8,58 +8,7 @@ from commandRunner import commandRunner
 class geRunner(commandRunner.commandRunner):
 
     def __init__(self, **kwargs):
-        self.args_set = []
-        self.std_out_string = None
-
-        if "$OPTIONS" in kwargs['command']:
-            raise ValueError("Grid Engine commands must be single exe names")
-        if "$FLAGS" in kwargs['command']:
-            raise ValueError("Grid Engine commands must be single exe names")
-        if "$INPUT" in kwargs['command']:
-            raise ValueError("Grid Engine commands must be single exe names")
-        if "$OUTPUT" in kwargs['command']:
-            raise ValueError("Grid Engine commands must be single exe names")
-        if " " in kwargs['command']:
-            raise ValueError("Grid Engine commands must be single exe names")
-
-        if isinstance(kwargs['std_out_string'], str):
-            self.std_out_string = kwargs.pop('std_out_string', '')
-        else:
-            raise TypeError('std_out_string must be a string')
-
         commandRunner.commandRunner.__init__(self, **kwargs)
-
-    def _translate_command(self, command):
-        '''
-            takes the command string and substitutes the relevant files names
-        '''
-        # we run through the flags list and, params dict and replace $INPUT
-        # with input_string and $OUTPUT with output_string
-        if self.input_string is not None:
-          self.args_set = [a.replace('$INPUT',  self.input_string) for a in self.args_set]
-        if self.output_string is not None:
-          self.args_set = [a.replace('$OUTPUT', self.output_string) for a in self.args_set]
-        return(command)
-
-    def prepare(self):
-        '''
-            Makes a directory and then moves the input data file there
-        '''
-        if not os.path.exists(self.path):
-            os.makedirs(self.path)
-
-        if self.input_data is not None:
-            for key in self.input_data.keys():
-                file_path = self.path+key
-                fh = open(file_path, 'w')
-                fh.write(self.input_data[key])
-                fh.close()
-
-        if self.flags is not None:
-            self.args_set.extend(self.flags)
-        if self.options is not None:
-            [self.args_set.extend([k+" "+v]) for k, v in sorted(self.options.items())]
-        self.command = self._translate_command(self.command)
 
     def run_cmd(self, success_params=[0]):
         '''
@@ -73,8 +22,8 @@ class geRunner(commandRunner.commandRunner):
                 jt = s.createJobTemplate()
                 jt.workingDirectory = self.path
                 jt.outputPath = ":"+self.output_string
-                jt.remoteCommand = self.command
-                jt.args = self.args_set
+                jt.remoteCommand = self.command_token
+                jt.args = self.params
                 jt.joinFiles = False
 
                 jobid = s.runJob(jt)
@@ -97,17 +46,3 @@ class geRunner(commandRunner.commandRunner):
                         self.output_data[outfile] = content_file.read()
 
         return(retval.exitStatus)
-
-    def tidy(self):
-        '''
-            Delete everything in the tmp dir and then remove the tmp dir
-        '''
-        for this_file in os.listdir(self.path):
-            file_path = os.path.join(self.path, this_file)
-            try:
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-            except Exception as e:
-                print(str(e))
-        if os.path.exists(self.path):
-            os.rmdir(self.path)

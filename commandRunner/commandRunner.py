@@ -28,6 +28,7 @@ class commandRunner():
         self.command = None
         self.input_data = None
         self.command = None
+        self.params = []
 
         self.input_string = None
         self.output_string = None
@@ -116,9 +117,10 @@ class commandRunner():
         '''
             takes the command string and substitutes the relevant files names
         '''
-        params = command.split()
-        command = [params[0], ]
-        params = params[1:]
+        self.params = command.split()
+        self.command_token = self.params[0]
+        command = [self.params[0], ]
+        self.params = self.params[1:]
         # interpolate the file names if needed
 
         flags_str = ""
@@ -130,7 +132,7 @@ class commandRunner():
             for key, value in sorted(self.options.items()):
                 command.extend([key, value])
 
-        command.extend(params)
+        command.extend(self.params)
 
         if self.input_string is not None:
             command = [a.replace('$INPUT',  self.input_string) for a in command]
@@ -147,7 +149,15 @@ class commandRunner():
         '''
             Makes a directory and then moves the input data file there
         '''
-        raise NotImplementedError
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+
+        if self.input_data is not None:
+            for key in self.input_data.keys():
+                file_path = self.path+key
+                fh = open(file_path, 'w')
+                fh.write(self.input_data[key])
+                fh.close()
 
     def run_cmd(self):
         '''
@@ -161,4 +171,12 @@ class commandRunner():
         '''
             Delete everything in the tmp dir and then remove the temp dir
         '''
-        raise NotImplementedError
+        for this_file in os.listdir(self.path):
+            file_path = os.path.join(self.path, this_file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+            except Exception as e:
+                print(e)
+        if os.path.exists(self.path):
+            os.rmdir(self.path)
