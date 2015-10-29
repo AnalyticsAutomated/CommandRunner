@@ -70,12 +70,12 @@ class geRunnerTestCase(unittest.TestCase):
 
     def test_args_list_is_correct_without_interpolation(self):
         self.r.prepare()
-        self.assertEqual(self.r.params, ['-lah', '-a 12',
+        self.assertEqual(self.r.ge_params, ['-lah', '-a 12',
                                            'b 1'])
 
     def test_args_list_is_correct_with_interpolation(self):
         self.r3.prepare()
-        self.assertEqual(self.r3.params, ['-lah',
+        self.assertEqual(self.r3.ge_params, ['-lah',
                                             'input.in',
                                             'input.in',
                                             'outfile.out',

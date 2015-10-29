@@ -23,7 +23,7 @@ class geRunner(commandRunner.commandRunner):
                 jt.workingDirectory = self.path
                 jt.outputPath = ":"+self.output_string
                 jt.remoteCommand = self.command_token
-                jt.args = self.params
+                jt.args = self.ge_params
                 jt.joinFiles = False
 
                 jobid = s.runJob(jt)
