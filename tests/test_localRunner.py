@@ -17,9 +17,9 @@ class localRunnerTestCase(unittest.TestCase):
     # REQUIRED
     id_string = "INTERESTING_ID_STRING"
     tmp_path = "/tmp/"
-    cmd_simple = "ls /tmp > huh"
-    cmd_complete = "ls $OPTIONS $FLAGS /tmp/$INPUT > $OUTPUT"
-
+    cmd_simple = "ls /tmp"
+    cmd_complete = "ls $OPTIONS $FLAGS /tmp/$INPUT $OUTPUT"
+    std_out_str = "out.stdout"
     # OPTIONAL
     input_string = "input.in"
     output_string = "output.out"
@@ -32,7 +32,8 @@ class localRunnerTestCase(unittest.TestCase):
         self.r = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                              out_globs=self.out_glob,
                              command=self.cmd_simple,
-                             input_data=self.input_data)
+                             input_data=self.input_data,
+                             std_out_str="outstuff")
         self.r2 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                               out_globs=self.out_glob,
                               command=self.cmd_complete,
@@ -94,8 +95,9 @@ class localRunnerTestCase(unittest.TestCase):
 
     def test_run_with_file_printing(self):
         r3 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                         command="ls /tmp > $OUTPUT",
-                         output_string="output.out", out_globs=["out", ])
+                         command="ls /tmp",
+                         output_string="output.out", out_globs=["out", ],
+                         std_out_string=self.std_out_str)
         r3.prepare()
         exit_status = r3.run_cmd()
         self.assertEqual(exit_status, 0)

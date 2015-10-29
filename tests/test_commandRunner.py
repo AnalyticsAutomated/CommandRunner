@@ -44,17 +44,17 @@ class commandRunnerTestCase(unittest.TestCase):
                                 options=self.options,
                                 std_out_str=self.std_out_str)
 
-    # def tearDown(self):
-    #     path = self.tmp_path+self.id_string
-    #     file = self.tmp_path+self.id_string+"/"+self.id_string+self.in_glob
-    #     out = self.tmp_path+self.id_string+"/"+self.id_string+self.out_glob
-    #     if os.path.exists(file):
-    #         os.remove(file)
-    #     if os.path.exists(out):
-    #         os.remove(out)
-    #     if os.path.exists(path):
-    #         os.rmdir(path)
-    #
+    def tearDown(self):
+        path = self.tmp_path+self.id_string
+        file = self.tmp_path+self.id_string+"/"+self.id_string+self.in_glob
+        out = self.tmp_path+self.id_string+"/"+self.id_string+self.out_glob
+        if os.path.exists(file):
+            os.remove(file)
+        if os.path.exists(out):
+            os.remove(out)
+        if os.path.exists(path):
+            os.rmdir(path)
+    
 
     def testPathExistsWorks(self):
         """
