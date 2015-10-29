@@ -97,14 +97,14 @@ working directory. Any data in the output file is available in to r.output_data
 Grid Engine Quirks
 ------------------
 
-geRunner uses python DRMAA to submit jobs. A consequence of this a command
+geRunner uses python DRMAA to submit jobs. A consequence of this that a command
 string is not constructed in quite the same way. The first portion of the
 command string is split off as a command. Subsequence portions are tokenised
 and added to a params array to be passed to DRMAA
 
 The Options dict is flattened to a key:value list. You can include or omit as
 many of those as you'd like options as you like. Any instance of the string
-$INPUT and $OUTPUT in the args array with be interpolated for the input_string
+$INPUT and $OUTPUT in final args array will be interpolated for the input_string
 and output_string respectively
 
 If std_out_string is provided it will be used as
