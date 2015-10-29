@@ -16,11 +16,15 @@ class geRunnerTestCase(unittest.TestCase):
 
     # OPTIONAL
     input_string = "input.in"
-    output_string = ":output.out"
+    output_string = "outfile.out"
     flags = ["-lah", ]
     options = {'-a': '12', 'b': '1'}
     out_glob = ['out', ]
     input_data = {"input.in": "SOME EXAMPLE DATA"}
+    std_out = ":std.out"
+    interpolation_flags = ["-lah", "$INPUT", "$INPUT", "$OUTPUT"]
+    interpolation_options = {'-a': '12', '$INPUT': '$OUTPUT',
+                             '$OUTPUT': '$OUTPUT'}
 
     def setUp(self):
         self.r = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
@@ -30,13 +34,26 @@ class geRunnerTestCase(unittest.TestCase):
                           input_string=self.input_string,
                           output_string=self.output_string,
                           flags=self.flags,
-                          options=self.options)
+                          options=self.options,
+                          std_out_string=self.std_out
+                          )
         self.r2 = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            out_globs=self.out_glob,
                            command=self.cmd_simple,
                            input_data=self.input_data,
                            output_string=self.output_string,
-                           flags=self.flags
+                           flags=self.flags,
+                           std_out_string=self.std_out
+                           )
+        self.r3 = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                           out_globs=self.out_glob,
+                           command=self.cmd_simple,
+                           input_data=self.input_data,
+                           input_string=self.input_string,
+                           output_string=self.output_string,
+                           flags=self.interpolation_flags,
+                           options=self.interpolation_options,
+                           std_out_string=self.std_out
                            )
 
     def tearDown(self):
@@ -51,10 +68,20 @@ class geRunnerTestCase(unittest.TestCase):
                     print(e)
             os.rmdir(path)
 
-    def test_args_list_is_correct(self):
+    def test_args_list_is_correct_without_interpolation(self):
         self.r.prepare()
-        self.assertEqual(self.r.args_set, ['input.in', '-lah', '-a 12',
+        self.assertEqual(self.r.ge_params, ['-lah', '-a 12',
                                            'b 1'])
+
+    def test_args_list_is_correct_with_interpolation(self):
+        self.r3.prepare()
+        self.assertEqual(self.r3.ge_params, ['-lah',
+                                            'input.in',
+                                            'input.in',
+                                            'outfile.out',
+                                            'input.in outfile.out',
+                                            'outfile.out outfile.out',
+                                            '-a 12'])
 
     def test_prepare_correctly_makes_directory_and_file(self):
         self.r.prepare()
@@ -70,34 +97,4 @@ class geRunnerTestCase(unittest.TestCase):
         self.assertNotEqual(self.r2.output_data, None)
 
     def test_flag_and_options_interpolation_does_not_occur(self):
-        self.assertEqual(self.r.command, self.cmd_simple)
-
-    def test_options_raises_error(self):
-        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls$OPTIONS", input_data=self.input_data)
-
-    def test_flags_raises_error(self):
-        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls$FLAGS", input_data=self.input_data)
-
-    def test_input_raises_error(self):
-        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls$INPUT", input_data=self.input_data)
-
-    def test_output_raises_error(self):
-        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls$OUTPUT", input_data=self.input_data)
-
-    def test_space_raises_error(self):
-        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls ", input_data=self.input_data)
+        self.assertEqual(self.r.command_token, self.cmd_simple)

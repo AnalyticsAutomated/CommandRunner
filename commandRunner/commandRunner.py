@@ -20,6 +20,7 @@ class commandRunner():
             output_string="out.file"
             options = {flag:entry}
             flags = [strings,]
+            std_out_string="str.stdout"
         '''
         self.tmp_id = None
         self.tmp_path = None
@@ -27,6 +28,8 @@ class commandRunner():
         self.command = None
         self.input_data = None
         self.command = None
+        self.params = []
+        self.ge_params = []
 
         self.input_string = None
         self.output_string = None
@@ -34,6 +37,7 @@ class commandRunner():
         self.flags = None
         self.output_data = None
         self.path = None
+        self.std_out_str = None
 
         self.__check_arguments(kwargs)
 
@@ -58,6 +62,12 @@ class commandRunner():
             self.command = kwargs.pop('command', '')
         else:
             raise TypeError('command must be a string')
+
+        if 'std_out_str' in kwargs:
+            if isinstance(kwargs['std_out_str'], str):
+                self.std_out_str = kwargs.pop('std_out_str', '')
+            else:
+                raise TypeError('std_out_str must be a str')
 
         if 'input_data' in kwargs:
             if isinstance(kwargs['input_data'], dict):
@@ -94,12 +104,9 @@ class commandRunner():
             else:
                 raise TypeError('flags must be list')
 
-        if "$OPTIONS" in self.command and self.options is None:
-            raise ValueError("Command string references $OPTIONS but no"
-                             "options provided")
-        if "$FLAGS" in self.command and self.flags is None:
-            raise ValueError("Command string references $FLAGS but no"
-                             "flags provided")
+        if ">" in self.command:
+            raise ValueError("Command string provides stdout redirection"
+                             ", please provide std_out_str instead")
         if "$INPUT" in self.command and self.input_string is None:
             raise ValueError("Command string references $INPUT but no"
                              "input_string provided")
@@ -111,32 +118,48 @@ class commandRunner():
         '''
             takes the command string and substitutes the relevant files names
         '''
+        self.params = command.split()
+        self.command_token = self.params[0]
+        command = [self.params[0], ]
+        self.params = self.params[1:]
         # interpolate the file names if needed
-        if self.output_string is not None:
-            command = command.replace("$OUTPUT", self.output_string)
-        if self.input_string is not None:
-            command = command.replace("$INPUT", self.input_string)
 
         flags_str = ""
         if self.flags is not None:
-            for flag in self.flags:
-                flags_str += flag+" "
-        flags_str = flags_str[:-1]
-        command = command.replace("$FLAGS", flags_str)
+            command.extend(self.flags)
 
         options_str = ""
         if self.options is not None:
             for key, value in sorted(self.options.items()):
-                options_str += key+" "+value+" "
-        options_str = options_str[:-1]
-        command = command.replace("$OPTIONS", options_str)
-        return(command)
+                command.extend([key+" "+value])
+
+        command.extend(self.params)
+        self.ge_params = command[1:]
+        if self.input_string is not None:
+            command = [a.replace('$INPUT',  self.input_string) for a in command]
+        if self.output_string is not None:
+            command = [a.replace('$OUTPUT', self.output_string) for a in command]
+
+        self.ge_params = command[1:]
+        if self.std_out_str is not None:
+            command.extend([">", self.std_out_str])
+
+        command_string = ' '.join(command)
+        return(command_string)
 
     def prepare(self):
         '''
             Makes a directory and then moves the input data file there
         '''
-        raise NotImplementedError
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+
+        if self.input_data is not None:
+            for key in self.input_data.keys():
+                file_path = self.path+key
+                fh = open(file_path, 'w')
+                fh.write(self.input_data[key])
+                fh.close()
 
     def run_cmd(self):
         '''
@@ -150,4 +173,12 @@ class commandRunner():
         '''
             Delete everything in the tmp dir and then remove the temp dir
         '''
-        raise NotImplementedError
+        for this_file in os.listdir(self.path):
+            file_path = os.path.join(self.path, this_file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+            except Exception as e:
+                print(e)
+        if os.path.exists(self.path):
+            os.rmdir(self.path)

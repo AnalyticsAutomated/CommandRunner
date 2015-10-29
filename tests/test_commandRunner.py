@@ -18,7 +18,7 @@ class commandRunnerTestCase(unittest.TestCase):
     id_string = "INTERESTING_ID_STRING"
     tmp_path = "/tmp/"
     cmd_simple = "ls /tmp"
-    cmd_complete = "ls $OPTIONS $FLAGS /tmp/$INPUT > $OUTPUT"
+    cmd_complete = "ls -cd $INPUT $OUTPUT"
 
     # OPTIONAL
     input_string = "input.in"
@@ -27,6 +27,7 @@ class commandRunnerTestCase(unittest.TestCase):
     options = {'-a': '12', 'b': '1'}
     out_glob = ['out', ]
     input_data = {"input.in": "INTERESTING_ID_STRING"}
+    std_out_str = "out.stdout"
 
     def setUp(self):
         self.r = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
@@ -40,19 +41,20 @@ class commandRunnerTestCase(unittest.TestCase):
                                 input_string=self.input_string,
                                 output_string=self.output_string,
                                 flags=self.flags,
-                                options=self.options)
+                                options=self.options,
+                                std_out_str=self.std_out_str)
 
-    # def tearDown(self):
-    #     path = self.tmp_path+self.id_string
-    #     file = self.tmp_path+self.id_string+"/"+self.id_string+self.in_glob
-    #     out = self.tmp_path+self.id_string+"/"+self.id_string+self.out_glob
-    #     if os.path.exists(file):
-    #         os.remove(file)
-    #     if os.path.exists(out):
-    #         os.remove(out)
-    #     if os.path.exists(path):
-    #         os.rmdir(path)
-    #
+    def tearDown(self):
+        path = self.tmp_path+self.id_string
+        if os.path.exists(path):
+            for this_file in os.listdir(path):
+                file_path = os.path.join(path, this_file)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                except e:
+                    print(e)
+            os.rmdir(path)
 
     def testPathExistsWorks(self):
         """
@@ -72,6 +74,16 @@ class commandRunnerTestCase(unittest.TestCase):
                           tmp_path="/blerghalmcblarghel",
                           out_globs=self.out_glob,
                           command=self.cmd_simple, input_data=self.input_data)
+
+    def test_std_out_str_is_string(self):
+        self.assertEqual(self.r2.std_out_str, self.std_out_str)
+
+    def test_std_out_str_is_not_string_raises_type_error(self):
+        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_simple, input_data=self.input_data,
+                          std_out_str=123)
 
     def test_tmp_id_is_string(self):
         self.assertEqual(self.r.tmp_id, self.id_string)
@@ -183,18 +195,6 @@ class commandRunnerTestCase(unittest.TestCase):
                            command=self.cmd_simple)
         self.assertEqual(r2.options, None)
 
-    def test_raise_if_options_ref_but_no_options(self):
-        self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls $OPTIONS", input_data=self.input_data)
-
-    def test_raise_if_flags_ref_but_no_flags(self):
-        self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls $FLAGS", input_data=self.input_data)
-
     def test_raise_if_input_ref_but_no_intput_string(self):
         self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
                           tmp_path=self.tmp_path,
@@ -213,9 +213,9 @@ class commandRunnerTestCase(unittest.TestCase):
         """
         r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            out_globs=self.out_glob,
-                           command="ls /tmp > $OUTPUT",
+                           command="ls /tmp $OUTPUT",
                            output_string="output.out")
-        test_string = "ls /tmp > output.out"
+        test_string = "ls /tmp output.out"
         self.assertEqual(r3.command, test_string)
 
     def test_translate_command_correctly_interpolate_input(self):
@@ -233,7 +233,7 @@ class commandRunnerTestCase(unittest.TestCase):
         test __translated_command works as expected
         """
         r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                           out_globs=self.out_glob, command="ls $FLAGS /tmp",
+                           out_globs=self.out_glob, command="ls /tmp",
                            flags=["-ls", "ah"])
         test_string = "ls -ls ah /tmp"
         self.assertEqual(r3.command, test_string)
@@ -243,13 +243,13 @@ class commandRunnerTestCase(unittest.TestCase):
             test __translated_command works as expected
         """
         r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                           out_globs=self.out_glob, command="ls $OPTIONS /tmp",
+                           out_globs=self.out_glob, command="ls /tmp",
                            options={'-a': '12', 'b': '1'})
         test_string = "ls -a 12 b 1 /tmp"
         self.assertEqual(r3.command, test_string)
 
     def test_translate_command_correctly_interpolate_all(self):
-        test_string = "ls -a 12 b 1 -l -ah /tmp/input.in > output.out"
+        test_string = "ls -l -ah -a 12 b 1 -cd input.in output.out > out.stdout"
         self.assertEqual(self.r2.command, test_string)
 
 if __name__ == '__main__':
