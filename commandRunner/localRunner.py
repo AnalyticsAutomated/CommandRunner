@@ -36,17 +36,3 @@ class localRunner(commandRunner.commandRunner):
                         self.output_data[outfile] = content_file.read()
 
         return(exit_status)
-
-    def tidy(self):
-        '''
-            Delete everything in the tmp dir and then remove the temp dir
-        '''
-        for this_file in os.listdir(self.path):
-            file_path = os.path.join(self.path, this_file)
-            try:
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-            except Exception as e:
-                print(e)
-        if os.path.exists(self.path):
-            os.rmdir(self.path)

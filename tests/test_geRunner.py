@@ -70,12 +70,12 @@ class geRunnerTestCase(unittest.TestCase):
 
     def test_args_list_is_correct_without_interpolation(self):
         self.r.prepare()
-        self.assertEqual(self.r.args_set, ['-lah', '-a 12',
+        self.assertEqual(self.r.params, ['-lah', '-a 12',
                                            'b 1'])
 
     def test_args_list_is_correct_with_interpolation(self):
         self.r3.prepare()
-        self.assertEqual(self.r3.args_set, ['-lah',
+        self.assertEqual(self.r3.params, ['-lah',
                                             'input.in',
                                             'input.in',
                                             'outfile.out',
@@ -98,30 +98,6 @@ class geRunnerTestCase(unittest.TestCase):
 
     def test_flag_and_options_interpolation_does_not_occur(self):
         self.assertEqual(self.r.command, self.cmd_simple)
-
-    def test_options_raises_error(self):
-        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls$OPTIONS", input_data=self.input_data)
-
-    def test_flags_raises_error(self):
-        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls$FLAGS", input_data=self.input_data)
-
-    def test_input_raises_error(self):
-        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls$INPUT", input_data=self.input_data)
-
-    def test_output_raises_error(self):
-        self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command="ls$OUTPUT", input_data=self.input_data)
 
     def test_space_raises_error(self):
         self.assertRaises(ValueError, geRunner, tmp_id=self.id_string,
