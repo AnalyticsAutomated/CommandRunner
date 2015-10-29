@@ -46,15 +46,15 @@ class commandRunnerTestCase(unittest.TestCase):
 
     def tearDown(self):
         path = self.tmp_path+self.id_string
-        file = self.tmp_path+self.id_string+"/"+self.id_string+self.in_glob
-        out = self.tmp_path+self.id_string+"/"+self.id_string+self.out_glob
-        if os.path.exists(file):
-            os.remove(file)
-        if os.path.exists(out):
-            os.remove(out)
         if os.path.exists(path):
+            for this_file in os.listdir(path):
+                file_path = os.path.join(path, this_file)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                except e:
+                    print(e)
             os.rmdir(path)
-    
 
     def testPathExistsWorks(self):
         """

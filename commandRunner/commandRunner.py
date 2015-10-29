@@ -29,6 +29,7 @@ class commandRunner():
         self.input_data = None
         self.command = None
         self.params = []
+        self.ge_params = []
 
         self.input_string = None
         self.output_string = None
@@ -133,17 +134,18 @@ class commandRunner():
                 command.extend([key+" "+value])
 
         command.extend(self.params)
-
+        self.ge_params = command[1:]
         if self.input_string is not None:
             command = [a.replace('$INPUT',  self.input_string) for a in command]
         if self.output_string is not None:
             command = [a.replace('$OUTPUT', self.output_string) for a in command]
 
+        self.ge_params = command[1:]
         if self.std_out_str is not None:
             command.extend([">", self.std_out_str])
 
-        command = ' '.join(command)
-        return(command)
+        command_string = ' '.join(command)
+        return(command_string)
 
     def prepare(self):
         '''
