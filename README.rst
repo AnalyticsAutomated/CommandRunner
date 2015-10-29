@@ -111,8 +111,8 @@ a file where the Grid Engine thread STDOUT will be captured.
     r.tidy()
     print(r.output_data)
 
-Following the interpolation rules, although DRMAA functions differently you can
-think of this as effectively run the following command
+Although DRMAA functions differently you can think of this as effectively
+run the following command (after following the interpolation rules)
 
    ls -file out.file > std.out
 
@@ -120,7 +120,7 @@ Tests
 -----
 
 Best to run these 1 suite at a time, geRunner tests will fail if you do not
-have ogs installed and DRMAA_LIBRARY_PATH set
+have Grid Engine installed, DRMAA_LIBRARY_PATH set and SGE_ROOT set.
 
 Run tests with:
 
