@@ -19,7 +19,7 @@ class geRunner(commandRunner.commandRunner):
         if "$OUTPUT" in kwargs['command']:
             raise ValueError("Grid Engine commands must be single exe names")
         if " " in kwargs['command']:
-             raise ValueError("Grid Engine commands must be single exe names")
+            raise ValueError("Grid Engine commands must be single exe names")
         commandRunner.commandRunner.__init__(self, **kwargs)
 
     def _translate_command(self, command):
