@@ -130,7 +130,7 @@ class commandRunner():
         options_str = ""
         if self.options is not None:
             for key, value in sorted(self.options.items()):
-                command.extend([key, value])
+                command.extend([key+" "+value])
 
         command.extend(self.params)
 
