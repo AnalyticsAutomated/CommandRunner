@@ -35,7 +35,7 @@ class geRunnerTestCase(unittest.TestCase):
                           output_string=self.output_string,
                           flags=self.flags,
                           options=self.options,
-                          std_out_string=self.std_out
+                          std_out_str=self.std_out
                           )
         self.r2 = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            out_globs=self.out_glob,
@@ -43,7 +43,7 @@ class geRunnerTestCase(unittest.TestCase):
                            input_data=self.input_data,
                            output_string=self.output_string,
                            flags=self.flags,
-                           std_out_string=self.std_out
+                           std_out_str=self.std_out
                            )
         self.r3 = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            out_globs=self.out_glob,
@@ -53,7 +53,7 @@ class geRunnerTestCase(unittest.TestCase):
                            output_string=self.output_string,
                            flags=self.interpolation_flags,
                            options=self.interpolation_options,
-                           std_out_string=self.std_out
+                           std_out_str=self.std_out
                            )
 
     def tearDown(self):
