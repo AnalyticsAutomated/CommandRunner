@@ -21,7 +21,7 @@ class geRunner(commandRunner.commandRunner):
             with drmaa.Session() as s:
                 jt = s.createJobTemplate()
                 jt.workingDirectory = self.path
-                jt.outputPath = ":"+self.output_string
+                jt.outputPath = ":"+self.std_out_str
                 jt.remoteCommand = self.command_token
                 jt.args = self.ge_params
                 jt.joinFiles = False
