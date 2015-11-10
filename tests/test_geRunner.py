@@ -68,33 +68,33 @@ class geRunnerTestCase(unittest.TestCase):
                     print(e)
             os.rmdir(path)
 
-    # def test_args_list_is_correct_without_interpolation(self):
-    #     self.r.prepare()
-    #     self.assertEqual(self.r.ge_params, ['-lah', '-a 12',
-    #                                         'b 1'])
-    #
-    # def test_args_list_is_correct_with_interpolation(self):
-    #     self.r3.prepare()
-    #     self.assertEqual(self.r3.ge_params, ['-lah',
-    #                                          'input.in',
-    #                                          'input.in',
-    #                                          'outfile.out',
-    #                                          'input.in outfile.out',
-    #                                          'outfile.out outfile.out',
-    #                                          '-a 12'])
-    #
-    # def test_prepare_correctly_makes_directory_and_file(self):
-    #     self.r.prepare()
-    #     path = self.tmp_path+self.id_string
-    #     file1 = self.tmp_path+self.id_string+"/input.in"
-    #     self.assertEqual(os.path.isdir(path), True)
-    #     self.assertEqual(os.path.exists(file1), True)
-    #
+    def test_args_list_is_correct_without_interpolation(self):
+        self.r.prepare()
+        self.assertEqual(self.r.ge_params, ['-lah', '-a 12',
+                                            'b 1'])
+
+    def test_args_list_is_correct_with_interpolation(self):
+        self.r3.prepare()
+        self.assertEqual(self.r3.ge_params, ['-lah',
+                                             'input.in',
+                                             'input.in',
+                                             'outfile.out',
+                                             'input.in outfile.out',
+                                             'outfile.out outfile.out',
+                                             '-a 12'])
+
+    def test_prepare_correctly_makes_directory_and_file(self):
+        self.r.prepare()
+        path = self.tmp_path+self.id_string
+        file1 = self.tmp_path+self.id_string+"/input.in"
+        self.assertEqual(os.path.isdir(path), True)
+        self.assertEqual(os.path.exists(file1), True)
+
     # def test_command_executes(self):
     #     self.r2.prepare()
     #     exit_status = self.r2.run_cmd()
     #     self.assertEqual(exit_status, 0)
     #     self.assertNotEqual(self.r2.output_data, None)
 
-    def test_flag_and_options_interpolation_does_not_occur(self):
-        self.assertEqual(self.r.command_token, self.cmd_simple)
+    # def test_flag_and_options_interpolation_does_not_occur(self):
+    #     self.assertEqual(self.r.command_token, self.cmd_simple)
