@@ -21,7 +21,7 @@ class geRunnerTestCase(unittest.TestCase):
     options = {'-a': '12', 'b': '1'}
     out_glob = ['out', ]
     input_data = {"input.in": "SOME EXAMPLE DATA"}
-    std_out = "std.out"
+    std_out = "out.stdout"
     interpolation_flags = ["-lah", "$INPUT", "$INPUT", "$OUTPUT"]
     interpolation_options = {'-a': '12', '$INPUT': '$OUTPUT',
                              '$OUTPUT': '$OUTPUT'}
@@ -92,6 +92,7 @@ class geRunnerTestCase(unittest.TestCase):
 
     def test_command_executes(self):
         self.r2.prepare()
+        print(self.r2.std_out_str)
         exit_status = self.r2.run_cmd()
         self.assertEqual(exit_status, 0)
         self.assertNotEqual(self.r2.output_data, None)
