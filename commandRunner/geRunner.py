@@ -17,6 +17,7 @@ class geRunner(commandRunner.commandRunner):
             again?)
         '''
         retval = None
+        print(str(self.std_out_str))
         try:
             with drmaa.Session() as s:
                 jt = s.createJobTemplate()

@@ -38,7 +38,6 @@ class commandRunner():
         self.output_data = None
         self.path = None
         self.std_out_str = None
-        self.ge_std_out_str = None
 
         self.__check_arguments(kwargs)
 
