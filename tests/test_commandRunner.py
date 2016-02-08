@@ -248,6 +248,17 @@ class commandRunnerTestCase(unittest.TestCase):
         test_string = "ls -a 12 b 1 /tmp"
         self.assertEqual(r3.command, test_string)
 
+    def test_translate_command_correctly_appends_stdout_redirect(self):
+        """
+            test __translated_command works as expected
+        """
+        r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                           out_globs=self.out_glob, command="ls /tmp",
+                           std_out_str="str.stdout",
+                           options={'-a': '12', 'b': '1'})
+        test_string = "ls -a 12 b 1 /tmp > str.stdout"
+        self.assertEqual(r3.command, test_string)
+
     def test_translate_command_correctly_interpolate_all(self):
         test_string = "ls -l -ah -a 12 b 1 -cd input.in output.out > out.stdout"
         self.assertEqual(self.r2.command, test_string)

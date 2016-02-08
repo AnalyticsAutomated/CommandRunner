@@ -45,7 +45,7 @@ class commandRunner():
         self.path = self.tmp_path+"/"+self.tmp_id+"/"
 #       self.command = self.__translate_command(kwargs.pop('command', ''))
         self.command = self._translate_command(self.command)
-
+        
     def __check_arguments(self, kwargs):
         # flags = (strings,)
         if os.path.isdir(kwargs['tmp_path']):
@@ -68,7 +68,7 @@ class commandRunner():
                 self.std_out_str = kwargs.pop('std_out_str', '')
             else:
                 raise TypeError('std_out_str must be a str')
-        
+
         if 'input_data' in kwargs:
             if isinstance(kwargs['input_data'], dict):
                 self.input_data = kwargs.pop('input_data', '')

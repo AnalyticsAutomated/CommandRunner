@@ -10,8 +10,8 @@ you provide with sufficient information that it can build a uniquely labeled
 tmp directory for all input and output files. This means that this can play
 nicely with things like Celery workers.
 
-Release 0.4
------------
+Release 0.4.2
+-------------
 
 This release supports running commands on localhost and DRMAA compliant grid
 engine installs (ogs, soge and univa). Commands are built/interpolated via

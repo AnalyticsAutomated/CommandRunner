@@ -6,7 +6,7 @@ def readme():
         return f.read()
 
 setup(name='commandRunner',
-      version='0.4.0',
+      version='0.4.2',
       description='Allows object oriented running of code/commands',
       long_description=readme(),
       url='https://github.com/AnalyticsAutomated/commandRunner.git',
