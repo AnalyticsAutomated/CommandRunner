@@ -1,0 +1,3 @@
+1. Change the interplolation rules. in_globs and out_globs are arrays
+so we could drop $INPUT and $OUTPUT to instead be numbered as per the
+array element $I1 $I2, $O1, $O2 etc... Which would be more flexible

@@ -18,7 +18,7 @@ class commandRunnerTestCase(unittest.TestCase):
     id_string = "INTERESTING_ID_STRING"
     tmp_path = "/tmp/"
     cmd_simple = "ls /tmp"
-    cmd_complete = "ls -cd $INPUT $OUTPUT"
+    cmd_complete = "ls -cd $ID $INPUT $OUTPUT"
 
     # OPTIONAL
     input_string = "input.in"
@@ -26,6 +26,7 @@ class commandRunnerTestCase(unittest.TestCase):
     flags = ['-l', '-ah']
     options = {'-a': '12', 'b': '1'}
     out_glob = ['out', ]
+    identifier = "TEST"
     input_data = {"input.in": "INTERESTING_ID_STRING"}
     std_out_str = "out.stdout"
 
@@ -40,6 +41,7 @@ class commandRunnerTestCase(unittest.TestCase):
                                 input_data=self.input_data,
                                 input_string=self.input_string,
                                 output_string=self.output_string,
+                                identifier=self.identifier,
                                 flags=self.flags,
                                 options=self.options,
                                 std_out_str=self.std_out_str)
@@ -166,7 +168,7 @@ class commandRunnerTestCase(unittest.TestCase):
     def test_options_is_dict(self):
         self.assertEqual(self.r2.options, self.options)
 
-    def testoptions_is_not_dict_raises_type_error(self):
+    def test_options_is_not_dict_raises_type_error(self):
         self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
                           tmp_path=self.tmp_path,
                           out_globs=self.out_glob,
@@ -260,7 +262,7 @@ class commandRunnerTestCase(unittest.TestCase):
         self.assertEqual(r3.command, test_string)
 
     def test_translate_command_correctly_interpolate_all(self):
-        test_string = "ls -l -ah -a 12 b 1 -cd input.in output.out > out.stdout"
+        test_string = "ls -l -ah -a 12 b 1 -cd TEST input.in output.out > out.stdout"
         self.assertEqual(self.r2.command, test_string)
 
 if __name__ == '__main__':

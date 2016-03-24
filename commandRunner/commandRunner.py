@@ -20,6 +20,7 @@ class commandRunner():
             output_string="out.file"
             options = {flag:entry}
             flags = [strings,]
+            identifier = "string"
             std_out_string="str.stdout"
         '''
         self.tmp_id = None
@@ -30,6 +31,7 @@ class commandRunner():
         self.command = None
         self.params = []
         self.ge_params = []
+        self.identifier = None
 
         self.input_string = None
         self.output_string = None
@@ -45,7 +47,7 @@ class commandRunner():
         self.path = self.tmp_path+"/"+self.tmp_id+"/"
 #       self.command = self.__translate_command(kwargs.pop('command', ''))
         self.command = self._translate_command(self.command)
-        
+
     def __check_arguments(self, kwargs):
         # flags = (strings,)
         if os.path.isdir(kwargs['tmp_path']):
@@ -62,6 +64,12 @@ class commandRunner():
             self.command = kwargs.pop('command', '')
         else:
             raise TypeError('command must be a string')
+
+        if 'identifier' in kwargs:
+            if isinstance(kwargs['identifier'], str):
+                self.identifier = kwargs.pop('identifier', '')
+            else:
+                raise TypeError('identifier must be a str')
 
         if 'std_out_str' in kwargs:
             if isinstance(kwargs['std_out_str'], str):
@@ -108,11 +116,15 @@ class commandRunner():
             raise ValueError("Command string provides stdout redirection"
                              ", please provide std_out_str instead")
         if "$INPUT" in self.command and self.input_string is None:
-            raise ValueError("Command string references $INPUT but no"
+            raise ValueError("Command string references $INPUT but no "
                              "input_string provided")
         if "$OUTPUT" in self.command and self.output_string is None:
-            raise ValueError("Command string references $OUTPUT but no"
+            raise ValueError("Command string references $OUTPUT but no "
                              "output_string provided")
+        if "$ID" in self.command and self.identifier is None:
+            raise ValueError("Command string references $ID but no "
+                             "identifier provided")
+
 
     def _translate_command(self, command):
         '''
@@ -139,6 +151,8 @@ class commandRunner():
             command = [a.replace('$INPUT',  self.input_string) for a in command]
         if self.output_string is not None:
             command = [a.replace('$OUTPUT', self.output_string) for a in command]
+        if self.identifier is not None:
+            command = [a.replace('$ID', self.identifier) for a in command]
 
         self.ge_params = command[1:]
         if self.std_out_str is not None:
