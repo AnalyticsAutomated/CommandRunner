@@ -44,7 +44,7 @@ Interpolation rules work the following way. The command string is split in to
 tokens if you provide a list of flags or a dict of options theses are inserted
 between the 0th and 1st token. So if you call with the following. If you
 provide a std_out_str then an appropriate redirection will be added to the
-end of your command string:
+end of your command string::
 
     r = localRunner(tmp_id="ID_STRING",
                     tmp_path=,/tmp/",
@@ -55,7 +55,7 @@ end of your command string:
                     input_data={DATA_DICT},
                     str_out_str="file.stdout")
 
-You will effectively build the following command:
+You will effectively build the following command::
 
       ls -a -l b this /tmp > file.stdout
 
@@ -70,7 +70,7 @@ called /tmp/ID_STRING/.
 
 Next it takes input_data. This is a dict of {Filename:Data_string} values.
 Iterating over, it writes the data to a file after the key in the tempdir. So
-the following dict:
+the following dict::
 
     { "test.file" : "THIS IS MY STRING OF DATA"}
 
@@ -87,7 +87,7 @@ The line r.run_cmd(success_params=[0]) runs the command string provided.
 
 Once complete if out_globs have been provided and the files were output then
 the contents of those files can be found in the dict r.output_data. which has
-the same {Filename:Data_string} form as the input_data dict:
+the same {Filename:Data_string} form as the input_data dict::
 
 { "output.file" : "THIS IS MY PROCESSED DATA"}
 
@@ -108,8 +108,7 @@ $INPUT and $OUTPUT in final args array will be interpolated for the input_string
 and output_string respectively
 
 If std_out_string is provided it will be used as
-a file where the Grid Engine thread STDOUT will be captured.
-
+a file where the Grid Engine thread STDOUT will be captured::
 
     from commandRunner.geRunner import *
 
@@ -124,7 +123,7 @@ a file where the Grid Engine thread STDOUT will be captured.
     print(r.output_data)
 
 Although DRMAA functions differently you can think of this as effectively
-run the following command (after following the interpolation rules)
+run the following command (after following the interpolation rules)::
 
    ls -file out.file -lah > std.out
 
@@ -134,7 +133,7 @@ Tests
 Best to run these 1 suite at a time, geRunner tests will fail if you do not
 have Grid Engine installed, DRMAA_LIBRARY_PATH set and SGE_ROOT set.
 
-Run tests with:
+Run tests with::
 
     python setup.py test -s tests/test_commandRunner.py
     python setup.py test -s tests/test_localRunner.py
