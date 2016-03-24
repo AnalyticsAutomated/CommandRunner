@@ -53,15 +53,19 @@ end of your command string::
                     options={"b", "this"}
                     command="ls /tmp",
                     input_data={DATA_DICT},
-                    str_out_str="file.stdout")
+                    str_out_str="file.stdout",
+                    identifier="string")
 
 You will effectively build the following command::
 
       ls -a -l b this /tmp > file.stdout
 
-The command string builing supports some limited interpolation. Anything
+The command string building supports some limited interpolation. Anything
 labeled $INPUT or $OUTPUT will be replaced with the input_string and
-output_string if you provide them on intialisation.
+output_string if you provide them on intialisation. Additionally you can
+interpolate an arbitrary string using the 'identifier' variable.
+Anything given here will be interpolated in to the command string in place
+of a $ID string.
 
 r.prepare() builds a temporary directory and makes any input file which is
 needed. In the example given tmp_id="ID_STRING", specifies a path where
