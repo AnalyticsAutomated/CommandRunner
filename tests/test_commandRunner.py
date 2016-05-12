@@ -29,6 +29,7 @@ class commandRunnerTestCase(unittest.TestCase):
     identifier = "TEST"
     input_data = {"input.in": "INTERESTING_ID_STRING"}
     std_out_str = "out.stdout"
+    env_vars = {"DIR": "/THIS/DIR/", "DIR2": "/THAT/DIR2/"}
 
     def setUp(self):
         self.r = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
@@ -44,7 +45,8 @@ class commandRunnerTestCase(unittest.TestCase):
                                 identifier=self.identifier,
                                 flags=self.flags,
                                 options=self.options,
-                                std_out_str=self.std_out_str)
+                                std_out_str=self.std_out_str,
+                                env_vars=self.env_vars)
 
     def tearDown(self):
         path = self.tmp_path+self.id_string
@@ -175,6 +177,40 @@ class commandRunnerTestCase(unittest.TestCase):
                           command=self.cmd_complete,
                           input_data=self.input_data,
                           options=123)
+
+    def test_env_vars_is_dict(self):
+        self.assertEqual(self.r2.env_vars, self.env_vars)
+
+    def test_env_vars_is_not_dict_raises_type_error(self):
+        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_complete,
+                          input_data=self.input_data,
+                          env_vars=[1, 2, 3])
+
+    def test_env_vars_raises_if_key_is_not_string(self):
+        """
+            test __translated_command works as expected
+        """
+        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_complete,
+                          input_data=self.input_data,
+                          env_vars={1: "this", "huh": "that"})
+
+    def test_env_vars_raises_if_value_is_not_string(self):
+        """
+            test __translated_command works as expected
+        """
+        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_complete,
+                          input_data=self.input_data,
+                          env_vars={"Well": 1, "huh": "that"})
+
 
     def test_will_take_blank_options(self):
         r2 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,

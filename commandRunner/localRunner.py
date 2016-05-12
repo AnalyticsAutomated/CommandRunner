@@ -19,7 +19,11 @@ class localRunner(commandRunner.commandRunner):
         exit_status = None
         os.chdir(self.path)
         try:
-            exit_status = call(self.command, shell=True)
+            if self.env_vars:
+                # print("USING ENVS!!!")
+                exit_status = call(self.command, shell=True, env=self.env_vars)
+            else:
+                exit_status = call(self.command, shell=True)
         except Exception as e:
             raise OSError("call() attempt failed")
 

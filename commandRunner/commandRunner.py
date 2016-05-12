@@ -22,6 +22,7 @@ class commandRunner():
             flags = [strings,]
             identifier = "string"
             std_out_string="str.stdout"
+            env_vars = {name:value}
         '''
         self.tmp_id = None
         self.tmp_path = None
@@ -40,6 +41,7 @@ class commandRunner():
         self.output_data = None
         self.path = None
         self.std_out_str = None
+        self.env_vars = None
 
         self.__check_arguments(kwargs)
 
@@ -105,6 +107,17 @@ class commandRunner():
                 self.options = kwargs.pop('options', '')
             else:
                 raise TypeError('options must be dict')
+
+        if 'env_vars' in kwargs:
+            if isinstance(kwargs['env_vars'], dict):
+                self.env_vars = kwargs.pop('env_vars', '')
+            else:
+                raise TypeError('env_vars must be dict')
+            if not all(isinstance(x, str) for x in self.env_vars.keys()):
+                raise TypeError('env_vars keys must be strings')
+            if not all(isinstance(x, str) for x in self.env_vars.values()):
+                raise TypeError('env_vars values must be strings')
+
 
         if 'flags' in kwargs:
             if isinstance(kwargs['flags'], list):
