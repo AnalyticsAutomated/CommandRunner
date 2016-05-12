@@ -10,7 +10,7 @@ you provide with sufficient information that it can build a uniquely labeled
 tmp directory for all input and output files. This means that this can play
 nicely with things like Celery workers.
 
-Release 0.4.2
+Release 0.4.5
 -------------
 
 This release supports running commands on localhost and DRMAA compliant grid
@@ -54,7 +54,8 @@ end of your command string::
                     command="ls /tmp",
                     input_data={DATA_DICT},
                     str_out_str="file.stdout",
-                    identifier="string")
+                    identifier="string"
+                    env_vars={"str":"str"})
 
 You will effectively build the following command::
 
@@ -82,6 +83,9 @@ would result in a file with the path /tmp/ID_STRING/test.file
 
 out_glob is an array of file suffixes which we want to gather up when the
 command completes.
+
+env_vars is a dict of key:value strings which is used to set the unix
+environment variables for the running command.
 
 Note that only tmp_id, tmp_path and command are required. Omitting
 input_data or out_glob assumes that there are respectively no input files to
