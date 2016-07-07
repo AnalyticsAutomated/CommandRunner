@@ -10,7 +10,7 @@ you provide with sufficient information that it can build a uniquely labeled
 tmp directory for all input and output files. This means that this can play
 nicely with things like Celery workers.
 
-Release 0.4.5
+Release 0.4.6
 -------------
 
 This release supports running commands on localhost and DRMAA compliant grid
@@ -139,7 +139,10 @@ Tests
 -----
 
 Best to run these 1 suite at a time, geRunner tests will fail if you do not
-have Grid Engine installed, DRMAA_LIBRARY_PATH set and SGE_ROOT set.
+have Grid Engine installed, DRMAA_LIBRARY_PATH set and SGE_ROOT set, for example::
+
+    export DRMAA_LIBRARY_PATH=/opt/ogs_src/GE2011.11/lib/linux-x64/libdrmaa.so
+    export SGE_ROOT=/opt/ogs_src/GE2011.11/
 
 Run tests with::
 

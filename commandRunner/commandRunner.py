@@ -118,7 +118,6 @@ class commandRunner():
             if not all(isinstance(x, str) for x in self.env_vars.values()):
                 raise TypeError('env_vars values must be strings')
 
-
         if 'flags' in kwargs:
             if isinstance(kwargs['flags'], list):
                 self.flags = kwargs.pop('flags', '')
@@ -137,7 +136,6 @@ class commandRunner():
         if "$ID" in self.command and self.identifier is None:
             raise ValueError("Command string references $ID but no "
                              "identifier provided")
-
 
     def _translate_command(self, command):
         '''

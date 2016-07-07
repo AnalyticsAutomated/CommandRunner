@@ -36,7 +36,7 @@ class localRunner(commandRunner.commandRunner):
         for this_glob in self.out_globs:
             for outfile in output_dir:
                 if outfile.endswith(this_glob):
-                    with open(self.path+outfile, 'r') as content_file:
+                    with open(self.path+outfile, 'rb') as content_file:
                         self.output_data[outfile] = content_file.read()
 
         return(exit_status)
