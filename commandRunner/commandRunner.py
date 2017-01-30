@@ -164,6 +164,8 @@ class commandRunner():
             command = [a.replace('$OUTPUT', self.output_string) for a in command]
         if self.identifier is not None:
             command = [a.replace('$ID', self.identifier) for a in command]
+        if self.tmp_path is not None:
+            command = [a.replace('$TMP', self.tmp_path) for a in command]
 
         self.ge_params = command[1:]
         if self.std_out_str is not None:

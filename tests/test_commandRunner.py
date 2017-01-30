@@ -266,6 +266,17 @@ class commandRunnerTestCase(unittest.TestCase):
         test_string = "ls /tmp input.in"
         self.assertEqual(r3.command, test_string)
 
+    def test_translate_command_correctly_interpolate_tmp(self):
+        """
+            test __translated_command works as expected
+        """
+        r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                           out_globs=self.out_glob, command="ls /tmp $TMP",
+                           input_string="input.in")
+        test_string = "ls /tmp /tmp"
+        self.assertEqual(r3.command, test_string)
+
+
     def test_translate_command_correctly_interpolate_flags(self):
         """
         test __translated_command works as expected

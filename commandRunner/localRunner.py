@@ -30,7 +30,7 @@ class localRunner(commandRunner.commandRunner):
         output_dir = os.listdir(self.path)
 
         if exit_status not in success_params:
-            raise OSError("Exit status" + str(exit_status))
+            raise OSError("Exit status " + str(exit_status))
 
         self.output_data = {}
         for this_glob in self.out_globs:
