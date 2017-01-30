@@ -10,7 +10,7 @@ you provide with sufficient information that it can build a uniquely labeled
 tmp directory for all input and output files. This means that this can play
 nicely with things like Celery workers.
 
-Release 0.4.6
+Release 0.4.8
 -------------
 
 This release supports running commands on localhost and DRMAA compliant grid
@@ -66,7 +66,7 @@ labeled $INPUT or $OUTPUT will be replaced with the input_string and
 output_string if you provide them on intialisation. Additionally you can
 interpolate an arbitrary string using the 'identifier' variable.
 Anything given here will be interpolated in to the command string in place
-of a $ID string.
+of a $ID string. $TMP will interpolate the sting in tmp_path in to the command.
 
 r.prepare() builds a temporary directory and makes any input file which is
 needed. In the example given tmp_id="ID_STRING", specifies a path where
