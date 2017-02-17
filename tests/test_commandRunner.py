@@ -18,14 +18,17 @@ class commandRunnerTestCase(unittest.TestCase):
     id_string = "INTERESTING_ID_STRING"
     tmp_path = "/tmp/"
     cmd_simple = "ls /tmp"
-    cmd_complete = "ls -cd $ID $INPUT $OUTPUT"
+    cmd_complete = "ls -cd $P1 $P2 $P3 $P3 $P4 $VALUE $I1 $I1 $O1 $TMP/$ID"
 
     # OPTIONAL
-    input_string = "input.in"
-    output_string = "output.out"
     flags = ['-l', '-ah']
-    options = {'-a': '12', 'b': '1'}
-    out_glob = ['out', ]
+    options = ['-a', 'b', '-c']
+    flags_with_options = ['-l', '-ah', '-a', 'b']
+    param_values = {'-a': {'value': '12', 'spacing': True, 'switchless': True},
+                    'b': {'value': '1', 'spacing': False, 'switchless': False},
+                    '-c': {'value': '10', 'spacing': True, 'switchless': False}}
+    in_glob = ['.in', ]
+    out_glob = ['.out', ]
     identifier = "TEST"
     input_data = {"input.in": "INTERESTING_ID_STRING"}
     std_out_str = "out.stdout"
@@ -37,16 +40,16 @@ class commandRunnerTestCase(unittest.TestCase):
                                command=self.cmd_simple,
                                input_data=self.input_data)
         self.r2 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                                in_globs=self.in_glob,
                                 out_globs=self.out_glob,
                                 command=self.cmd_complete,
                                 input_data=self.input_data,
-                                input_string=self.input_string,
-                                output_string=self.output_string,
                                 identifier=self.identifier,
-                                flags=self.flags,
-                                options=self.options,
+                                params=self.flags_with_options,
+                                param_values=self.param_values,
                                 std_out_str=self.std_out_str,
-                                env_vars=self.env_vars)
+                                env_vars=self.env_vars,
+                                value_string="path")
 
     def tearDown(self):
         path = self.tmp_path+self.id_string
@@ -133,50 +136,22 @@ class commandRunnerTestCase(unittest.TestCase):
     def test_will_take_blank_out_globs(self):
         r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            command=self.cmd_simple)
-        self.assertEqual(r3.out_globs, None)
+        self.assertEqual(r3.out_globs, [])
 
-    def test_input_string_is_string(self):
-        self.assertEqual(self.r2.input_string, self.input_string)
+    def test_in_globs_is_list(self):
+        self.assertEqual(self.r.in_globs, [])
 
-    def test_input_string_is_not_string_raises_type_error(self):
+    def test_in_globs_is_not_list_raises_type_error(self):
         self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
                           tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command=self.cmd_complete,
-                          input_data=self.input_data,
-                          input_string=123)
+                          in_globs=123,
+                          command=self.cmd_simple, input_data=self.input_data)
 
-    def test_will_take_blank_input_string(self):
-        r2 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+    def test_will_take_blank_out_globs(self):
+        r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            command=self.cmd_simple)
-        self.assertEqual(r2.input_string, None)
+        self.assertEqual(r3.in_globs, [])
 
-    def test_output_string_is_string(self):
-        self.assertEqual(self.r2.output_string, self.output_string)
-
-    def test_output_string_is_not_string_raises_type_error(self):
-        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command=self.cmd_complete,
-                          input_data=self.input_data,
-                          output_string=123)
-
-    def test_will_take_blank_output_string(self):
-        r2 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                           command=self.cmd_simple)
-        self.assertEqual(r2.output_string, None)
-
-    def test_options_is_dict(self):
-        self.assertEqual(self.r2.options, self.options)
-
-    def test_options_is_not_dict_raises_type_error(self):
-        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
-                          tmp_path=self.tmp_path,
-                          out_globs=self.out_glob,
-                          command=self.cmd_complete,
-                          input_data=self.input_data,
-                          options=123)
 
     def test_env_vars_is_dict(self):
         self.assertEqual(self.r2.env_vars, self.env_vars)
@@ -212,38 +187,90 @@ class commandRunnerTestCase(unittest.TestCase):
                           env_vars={"Well": 1, "huh": "that"})
 
 
-    def test_will_take_blank_options(self):
-        r2 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                           command=self.cmd_simple)
-        self.assertEqual(r2.options, None)
+    def test_params_is_list(self):
+        self.assertEqual(self.r2.params, self.flags_with_options)
 
-    def test_flags_is_list(self):
-        self.assertEqual(self.r2.options, self.options)
-
-    def test_flags_is_not_list_raises_type_error(self):
+    def test_params_is_not_list_raises_type_error(self):
         self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
                           tmp_path=self.tmp_path,
                           out_globs=self.out_glob,
-                          command=self.cmd_complete,
+                          command=self.cmd_simple,
                           input_data=self.input_data,
-                          flags=123)
+                          params=123)
 
-    def test_will_take_blank_flags(self):
+    def test_will_take_blank_params(self):
         r2 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            command=self.cmd_simple)
-        self.assertEqual(r2.options, None)
+        self.assertEqual(r2.params, [])
 
-    def test_raise_if_input_ref_but_no_intput_string(self):
+    def test_raise_if_value_ref_but_no_value_string(self):
         self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
                           tmp_path=self.tmp_path,
                           out_globs=self.out_glob,
-                          command="ls $INPUT", input_data=self.input_data)
+                          command="ls $VALUE", input_data=self.input_data)
 
-    def test_raise_if_output_ref_but_no_output_string(self):
+    def test_param_values_is_dict(self):
+        self.assertEqual(self.r2.param_values, self.param_values)
+
+    def test_param_values_is_not_dict_raises_type_error(self):
+        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_simple,
+                          input_data=self.input_data,
+                          param_values=[])
+
+    def test_will_take_blank_param_values(self):
+        r2 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                           command=self.cmd_simple)
+        self.assertEqual(r2.param_values, {})
+
+    def test_raise_if_param_values_does_not_contain_dict_values(self):
+        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_simple,
+                          input_data=self.input_data,
+                          param_values={'a': []})
+
+    def test_raise_if_param_values_is_missing_keys(self):
         self.assertRaises(ValueError, commandRunner, tmp_id=self.id_string,
                           tmp_path=self.tmp_path,
                           out_globs=self.out_glob,
-                          command="ls $OUTPUT", input_data=self.input_data)
+                          command=self.cmd_simple,
+                          input_data=self.input_data,
+                          param_values={'a': {'things': '123'}})
+
+    def test_raise_if_param_values_value_is_not_str(self):
+        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_simple,
+                          input_data=self.input_data,
+                          param_values={'a': {'value': 123,
+                                              'switchless': True,
+                                              'spacing': True}})
+
+    def test_raise_if_param_values_switchless_is_not_boolean(self):
+        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_simple,
+                          input_data=self.input_data,
+                          param_values={'a': {'value': '123',
+                                              'switchless': "True",
+                                              'spacing': True}})
+
+    def test_raise_if_param_values_spacing_is_not_boolean(self):
+        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_simple,
+                          input_data=self.input_data,
+                          param_values={'a': {'value': '123',
+                                              'switchless': True,
+                                              'spacing': "True"}})
+
 
     def test_translate_command_correctly_interpolate_output(self):
         """
@@ -251,50 +278,91 @@ class commandRunnerTestCase(unittest.TestCase):
         """
         r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            out_globs=self.out_glob,
-                           command="ls /tmp $OUTPUT",
-                           output_string="output.out")
-        test_string = "ls /tmp output.out"
+                           command="ls /tmp $O1")
+        test_string = "ls /tmp INTERESTING_ID_STRING.out"
         self.assertEqual(r3.command, test_string)
+
+    def test_translate_command_correctly_interpolate_multiple_output(self):
+        """
+            test __translated_command works as expected
+        """
+        r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                           out_globs=['.out', '.other'],
+                           command="ls /tmp $O1 $O2")
+        test_string = "ls /tmp INTERESTING_ID_STRING.out"
 
     def test_translate_command_correctly_interpolate_input(self):
         """
             test __translated_command works as expected
         """
         r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                           out_globs=self.out_glob, command="ls /tmp $INPUT",
-                           input_string="input.in")
-        test_string = "ls /tmp input.in"
+                           in_globs=self.in_glob,
+                           out_globs=self.out_glob, command="ls /tmp $I1",)
+        test_string = "ls /tmp INTERESTING_ID_STRING.in"
         self.assertEqual(r3.command, test_string)
+
+        def test_translate_command_correctly_interpolate_multiple_input(self):
+            """
+                test __translated_command works as expected
+            """
+            r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                               in_globs=['.in', '.this'],
+                               out_globs=self.out_glob,
+                               command="ls /tmp $I1 $I2",)
+            test_string = "ls /tmp INTERESTING_ID_STRING.in " \
+                          "INTERESTING_ID_STRING.this"
+            self.assertEqual(r3.command, test_string)
 
     def test_translate_command_correctly_interpolate_tmp(self):
         """
             test __translated_command works as expected
         """
         r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                           out_globs=self.out_glob, command="ls /tmp $TMP",
-                           input_string="input.in")
+                           out_globs=self.out_glob, command="ls /tmp $TMP")
         test_string = "ls /tmp /tmp"
         self.assertEqual(r3.command, test_string)
 
-
-    def test_translate_command_correctly_interpolate_flags(self):
-        """
-        test __translated_command works as expected
-        """
-        r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                           out_globs=self.out_glob, command="ls /tmp",
-                           flags=["-ls", "ah"])
-        test_string = "ls -ls ah /tmp"
-        self.assertEqual(r3.command, test_string)
-
-    def test_translate_command_correctly_interpolate_options(self):
+    def test_translate_command_correctly_interpolate_value_string(self):
         """
             test __translated_command works as expected
         """
         r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                           out_globs=self.out_glob, command="ls /tmp",
-                           options={'-a': '12', 'b': '1'})
-        test_string = "ls -a 12 b 1 /tmp"
+                           out_globs=self.out_glob, command="ls /tmp $VALUE",
+                           value_string="things")
+        test_string = "ls /tmp things"
+        self.assertEqual(r3.command, test_string)
+
+    def test_translate_command_correctly_interpolate_flag_params(self):
+        """
+        test __translated_command works as expected
+        """
+        r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                           out_globs=self.out_glob, command="ls $P1 $P2 /tmp",
+                           params=self.flags)
+        test_string = "ls -l -ah /tmp"
+        self.assertEqual(r3.command, test_string)
+
+    def test_translate_command_correctly_interpolate_option_params(self):
+        """
+        test __translated_command works as expected
+        """
+        r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                           out_globs=self.out_glob,
+                           command="ls $P1 $P2 $P3 /tmp",
+                           params=self.options, param_values=self.param_values)
+        test_string = "ls 12 b1 -c 10 /tmp"
+        self.assertEqual(r3.command, test_string)
+
+    def test_translate_command_correctly_interpolate_option__and_flags(self):
+        """
+        test __translated_command works as expected
+        """
+        r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                           out_globs=self.out_glob,
+                           command="ls $P1 $P2 $P3 $P4 /tmp",
+                           params=self.flags_with_options,
+                           param_values=self.param_values)
+        test_string = "ls -l -ah 12 b1 /tmp"
         self.assertEqual(r3.command, test_string)
 
     def test_translate_command_correctly_appends_stdout_redirect(self):
@@ -302,14 +370,18 @@ class commandRunnerTestCase(unittest.TestCase):
             test __translated_command works as expected
         """
         r3 = commandRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                           out_globs=self.out_glob, command="ls /tmp",
-                           std_out_str="str.stdout",
-                           options={'-a': '12', 'b': '1'})
-        test_string = "ls -a 12 b 1 /tmp > str.stdout"
+                           out_globs=self.out_glob,
+                           command="ls $P1 $P2 $P3 $P4 /tmp",
+                           params=self.flags_with_options,
+                           param_values=self.param_values,
+                           std_out_str="str.stdout")
+        test_string = "ls -l -ah 12 b1 /tmp > str.stdout"
         self.assertEqual(r3.command, test_string)
 
     def test_translate_command_correctly_interpolate_all(self):
-        test_string = "ls -l -ah -a 12 b 1 -cd TEST input.in output.out > out.stdout"
+        test_string = "ls -cd -l -ah 12 12 b1 path INTERESTING_ID_STRING.in " \
+                      "INTERESTING_ID_STRING.in INTERESTING_ID_STRING.out " \
+                      "/tmp/TEST > out.stdout"
         self.assertEqual(self.r2.command, test_string)
 
 if __name__ == '__main__':

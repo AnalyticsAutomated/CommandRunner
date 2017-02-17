@@ -14,30 +14,32 @@ class commandRunner():
             tmp_path="/tmp/"
             command="ls /tmp > $OUTPUT"
 
-            out_globs=['file',]
+            in_globs['.file', ]
+            out_globs=['.file', ]
             input_data={filename:data_string}
-            input_string="test.file"
-            output_string="out.file"
-            options = {flag:entry}
-            flags = [strings,]
+            params = ['string', ]
+            param_values = {'string': {'value': string,
+                                       'spacing': True|False,
+                                       'switchless': True|False}}
             identifier = "string"
             std_out_string="str.stdout"
             env_vars = {name:value}
+            value_string="stuffForCommandline"
         '''
         self.tmp_id = None
         self.tmp_path = None
-        self.out_globs = None
+        self.in_globs = []
+        self.out_globs = []
         self.command = None
         self.input_data = None
         self.command = None
-        self.params = []
-        self.ge_params = []
+        self.tokens = []
+        self.ge_tokens = []
         self.identifier = None
 
-        self.input_string = None
-        self.output_string = None
-        self.options = None
-        self.flags = None
+        self.value_string = None
+        self.params = []
+        self.param_values = {}
         self.output_data = None
         self.path = None
         self.std_out_str = None
@@ -89,24 +91,19 @@ class commandRunner():
             if isinstance(kwargs['out_globs'], list):
                 self.out_globs = kwargs.pop('out_globs', '')
             else:
-                raise TypeError('out_globs must be array')
+                raise TypeError('out_globs must be list')
 
-        if 'input_string' in kwargs:
-            if isinstance(kwargs['input_string'], str):
-                self.input_string = kwargs.pop('input_string', '')
+        if 'in_globs' in kwargs:
+            if isinstance(kwargs['in_globs'], list):
+                self.in_globs = kwargs.pop('in_globs', '')
             else:
-                raise TypeError('input_string must be str')
-        if 'output_string' in kwargs:
-            if isinstance(kwargs['output_string'], str):
-                self.output_string = kwargs.pop('output_string', '')
-            else:
-                raise TypeError('output_string must be str')
+                raise TypeError('in_globs must be list')
 
-        if 'options' in kwargs:
-            if isinstance(kwargs['options'], dict):
-                self.options = kwargs.pop('options', '')
+        if 'value_string' in kwargs:
+            if isinstance(kwargs['value_string'], str):
+                self.value_string = kwargs.pop('value_string', '')
             else:
-                raise TypeError('options must be dict')
+                raise TypeError('value_string must be str')
 
         if 'env_vars' in kwargs:
             if isinstance(kwargs['env_vars'], dict):
@@ -118,21 +115,45 @@ class commandRunner():
             if not all(isinstance(x, str) for x in self.env_vars.values()):
                 raise TypeError('env_vars values must be strings')
 
-        if 'flags' in kwargs:
-            if isinstance(kwargs['flags'], list):
-                self.flags = kwargs.pop('flags', '')
+        if 'params' in kwargs:
+            if isinstance(kwargs['params'], list):
+                self.params = kwargs.pop('params', '')
             else:
-                raise TypeError('flags must be list')
+                raise TypeError('params must be list')
+
+        if 'param_values' in kwargs:
+            if isinstance(kwargs['param_values'], dict):
+                self.param_values = kwargs.pop('param_values', '')
+            else:
+                raise TypeError('param_values must be dict')
+
+        if len(self.param_values) > 0:
+            if not all(isinstance(x, dict) for x in self.param_values.values()):
+                raise TypeError('param_values does not contain key:dict')
+            param_keys = ['value', 'spacing', 'switchless']
+            for i, param_dict in self.param_values.items():
+                if not set(param_keys).issubset(set(param_dict)):
+                    raise ValueError(str(i)+" : param_values missing config "
+                                     "details")
+                if not isinstance(param_dict['value'], str):
+                    raise TypeError('param_values "value" provided is not '
+                                    'string')
+                if not isinstance(param_dict['switchless'], bool):
+                    raise TypeError('param_values "switchless" provided is not '
+                                    'boolean')
+                if not isinstance(param_dict['spacing'], bool):
+                    raise TypeError('param_values "spacing" provided is not '
+                                    'boolean')
 
         if ">" in self.command:
             raise ValueError("Command string provides stdout redirection"
                              ", please provide std_out_str instead")
-        if "$INPUT" in self.command and self.input_string is None:
-            raise ValueError("Command string references $INPUT but no "
-                             "input_string provided")
-        if "$OUTPUT" in self.command and self.output_string is None:
-            raise ValueError("Command string references $OUTPUT but no "
-                             "output_string provided")
+        if "$TMP" in self.command and self.tmp_path is None:
+            raise ValueError("Command string references $TMP but no "
+                             "tmp_path provided")
+        if "$VALUE" in self.command and self.value_string is None:
+            raise ValueError("Command string references $VALUE but no "
+                             "value_string provided")
         if "$ID" in self.command and self.identifier is None:
             raise ValueError("Command string references $ID but no "
                              "identifier provided")
@@ -141,37 +162,44 @@ class commandRunner():
         '''
             takes the command string and substitutes the relevant files names
         '''
-        self.params = command.split()
-        self.command_token = self.params[0]
-        command = [self.params[0], ]
-        self.params = self.params[1:]
-        # interpolate the file names if needed
+        self.tokens = command.split()
 
-        flags_str = ""
-        if self.flags is not None:
-            command.extend(self.flags)
+        for idx, p in enumerate(self.params):
+            identifier = "$P"+str(idx+1)
+            if p in self.param_values:
+                options = self.param_values[p]
+                value = ''
+                if options['switchless']:
+                    value = options['value']
+                else:
+                    value = p
+                    if options['spacing']:
+                        value += ' '
+                    value += options['value']
+                self.tokens = [a.replace(identifier, value) for a in self.tokens]
+            else:
+                self.tokens = [a.replace(identifier, p) for a in self.tokens]
+        for idx, i in enumerate(self.in_globs):
+            file_name = self.tmp_id+i
+            identifier = "$I"+str(idx+1)
+            self.tokens = [a.replace(identifier, file_name) for a in self.tokens]
+        for idx, o in enumerate(self.out_globs):
+            file_name = self.tmp_id+o
+            identifier = "$O"+str(idx+1)
+            self.tokens = [a.replace(identifier, file_name) for a in self.tokens]
 
-        options_str = ""
-        if self.options is not None:
-            for key, value in sorted(self.options.items()):
-                command.extend([key+" "+value])
-
-        command.extend(self.params)
-        self.ge_params = command[1:]
-        if self.input_string is not None:
-            command = [a.replace('$INPUT',  self.input_string) for a in command]
-        if self.output_string is not None:
-            command = [a.replace('$OUTPUT', self.output_string) for a in command]
+        if self.value_string is not None:
+            self.tokens = [a.replace('$VALUE', self.value_string) for a in self.tokens]
         if self.identifier is not None:
-            command = [a.replace('$ID', self.identifier) for a in command]
+            self.tokens = [a.replace('$ID', self.identifier) for a in self.tokens]
         if self.tmp_path is not None:
-            command = [a.replace('$TMP', self.tmp_path) for a in command]
+            self.tokens = [a.replace('$TMP', self.tmp_path) for a in self.tokens]
 
-        self.ge_params = command[1:]
+        self.ge_tokens = self.tokens[1:]
         if self.std_out_str is not None:
-            command.extend([">", self.std_out_str])
+            self.tokens.extend([">", self.std_out_str])
 
-        command_string = ' '.join(command)
+        command_string = ' '.join(self.tokens)
         return(command_string)
 
     def prepare(self):

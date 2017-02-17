@@ -1,5 +1,6 @@
 __pycache__/*
 *.py[cod]
+.pypirc
 *$py.class
 commandRunner.egg-info/*
 dist/*
