@@ -68,7 +68,7 @@ class commandRunner():
                 self.std_out_str = kwargs.pop('std_out_str', '')
             else:
                 raise TypeError('std_out_str must be a str')
-        
+
         if 'input_data' in kwargs:
             if isinstance(kwargs['input_data'], dict):
                 self.input_data = kwargs.pop('input_data', '')
@@ -86,6 +86,7 @@ class commandRunner():
                 self.input_string = kwargs.pop('input_string', '')
             else:
                 raise TypeError('input_string must be str')
+
         if 'output_string' in kwargs:
             if isinstance(kwargs['output_string'], str):
                 self.output_string = kwargs.pop('output_string', '')
