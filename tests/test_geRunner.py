@@ -24,6 +24,7 @@ class geRunnerTestCase(unittest.TestCase):
     in_glob = ['.in', ]
     out_glob = ['.out', ]
     input_data = {"input.in": "SOME EXAMPLE DATA"}
+    env_vars = {"THIS": "MANY THINGS"}
     std_out = "out.stdout"
 
     def setUp(self):
