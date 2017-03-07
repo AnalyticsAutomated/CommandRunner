@@ -32,7 +32,8 @@ class localRunnerTestCase(unittest.TestCase):
     in_glob = ['.in', ]
     out_glob = ['.out', ]
     input_data = {"input.in": "SOME EXAMPLE DATA"}
-
+    value = "12"
+    identifier = "TEST"
     def setUp(self):
         self.r = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                              out_globs=self.out_glob,
@@ -41,11 +42,13 @@ class localRunnerTestCase(unittest.TestCase):
                              std_out_str="outstuff")
         self.r2 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                               out_globs=self.out_glob,
-                              in_globs=self.in_glob
+                              in_globs=self.in_glob,
                               command=self.cmd_complete,
                               input_data=self.input_data,
                               flags=self.flags,
                               options=self.options,
+                              value_string=self.value,
+                              identifier=self.identifier,
                               env_vars={"DIR": "/THIS/DIR/",
                                         "DIR2": "/THAT/DIR2/"})
 
