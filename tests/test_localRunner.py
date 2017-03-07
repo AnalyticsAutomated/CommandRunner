@@ -22,8 +22,6 @@ class localRunnerTestCase(unittest.TestCase):
 
     std_out_str = "out.stdout"
     # OPTIONAL
-    flags = ['-l', '-ah']
-    options = ['-a', 'b', '-c']
     flags_with_options = ['-l', '-ah', '-a', 'b']
     param_values = {'-a': {'value': '12', 'spacing': True, 'switchless': True},
                     'b': {'value': '1', 'spacing': False, 'switchless': False},
@@ -45,8 +43,8 @@ class localRunnerTestCase(unittest.TestCase):
                               in_globs=self.in_glob,
                               command=self.cmd_complete,
                               input_data=self.input_data,
-                              flags=self.flags,
-                              options=self.options,
+                              params=self.flags_with_options,
+                              param_values=self.param_values,
                               value_string=self.value,
                               identifier=self.identifier,
                               env_vars={"DIR": "/THIS/DIR/",

@@ -195,7 +195,8 @@ class commandRunner():
         if self.tmp_path is not None:
             self.tokens = [a.replace('$TMP', self.tmp_path) for a in self.tokens]
 
-        self.ge_tokens = self.tokens[1:]
+        self.ge_params = self.tokens[1:]
+        self.command_token = self.tokens[0]
         if self.std_out_str is not None:
             self.tokens.extend([">", self.std_out_str])
 

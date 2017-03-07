@@ -13,46 +13,35 @@ class geRunnerTestCase(unittest.TestCase):
     id_string = "INTERESTING_ID_STRING"
     tmp_path = "/tmp/"
     cmd_simple = "/usr/bin/ls"
-
+    cmd_complex = "/usr/bin/ls $P1 $P2 $P3 $P4 $P5"
     # OPTIONAL
-    input_string = "input.in"
-    output_string = "outfile.out"
-    flags = ["-lah", ]
-    options = {'-a': '12', 'b': '1'}
-    out_glob = ['out', ]
+
+    flags_with_options = ['-l', '-ah', '-a', 'b', '-c']
+    param_values = {'-a': {'value': '12', 'spacing': True, 'switchless': True},
+                    'b': {'value': '1', 'spacing': False, 'switchless': False},
+                    '-c': {'value': '10', 'spacing': True, 'switchless': False}
+                    }
+    in_glob = ['.in', ]
+    out_glob = ['.out', ]
     input_data = {"input.in": "SOME EXAMPLE DATA"}
     std_out = "out.stdout"
-    interpolation_flags = ["-lah", "$INPUT", "$INPUT", "$OUTPUT"]
-    interpolation_options = {'-a': '12', '$INPUT': '$OUTPUT',
-                             '$OUTPUT': '$OUTPUT'}
 
     def setUp(self):
         self.r = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                           out_globs=self.out_glob,
-                          command=self.cmd_simple,
+                          in_globs=self.in_glob,
+                          params=self.flags_with_options,
+                          command=self.cmd_complex,
                           input_data=self.input_data,
-                          input_string=self.input_string,
-                          output_string=self.output_string,
-                          flags=self.flags,
-                          options=self.options,
                           std_out_str=self.std_out
                           )
         self.r2 = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                            out_globs=self.out_glob,
-                           command=self.cmd_simple,
+                           in_globs=self.in_glob,
+                           command=self.cmd_complex,
                            input_data=self.input_data,
-                           output_string=self.output_string,
-                           flags=self.flags,
-                           std_out_str=self.std_out
-                           )
-        self.r3 = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
-                           out_globs=self.out_glob,
-                           command=self.cmd_simple,
-                           input_data=self.input_data,
-                           input_string=self.input_string,
-                           output_string=self.output_string,
-                           flags=self.interpolation_flags,
-                           options=self.interpolation_options,
+                           params=self.flags_with_options,
+                           param_values=self.param_values,
                            std_out_str=self.std_out
                            )
 
@@ -70,18 +59,16 @@ class geRunnerTestCase(unittest.TestCase):
 
     def test_args_list_is_correct_without_interpolation(self):
         self.r.prepare()
-        self.assertEqual(self.r.ge_params, ['-lah', '-a 12',
-                                            'b 1'])
+        self.assertEqual(self.r.ge_params, ['-l', '-ah', '-a', 'b', '-c'])
 
     def test_args_list_is_correct_with_interpolation(self):
-        self.r3.prepare()
-        self.assertEqual(self.r3.ge_params, ['-lah',
-                                             'input.in',
-                                             'input.in',
-                                             'outfile.out',
-                                             'input.in outfile.out',
-                                             'outfile.out outfile.out',
-                                             '-a 12'])
+        self.r2.prepare()
+        self.assertEqual(self.r2.ge_params, ['-l',
+                                             '-ah',
+                                             '12',
+                                             'b1',
+                                             '-c 10',
+                                             ])
 
     def test_prepare_correctly_makes_directory_and_file(self):
         self.r.prepare()
