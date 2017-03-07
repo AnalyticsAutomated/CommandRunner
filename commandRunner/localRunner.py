@@ -19,20 +19,24 @@ class localRunner(commandRunner.commandRunner):
         exit_status = None
         os.chdir(self.path)
         try:
-            exit_status = call(self.command, shell=True)
+            if self.env_vars:
+                # print("USING ENVS!!!")
+                exit_status = call(self.command, shell=True, env=self.env_vars)
+            else:
+                exit_status = call(self.command, shell=True)
         except Exception as e:
             raise OSError("call() attempt failed")
 
         output_dir = os.listdir(self.path)
 
         if exit_status not in success_params:
-            raise OSError("Exist status" + str(exit_status))
+            raise OSError("Exit status " + str(exit_status))
 
         self.output_data = {}
         for this_glob in self.out_globs:
             for outfile in output_dir:
                 if outfile.endswith(this_glob):
-                    with open(self.path+outfile, 'r') as content_file:
+                    with open(self.path+outfile, 'rb') as content_file:
                         self.output_data[outfile] = content_file.read()
 
         return(exit_status)

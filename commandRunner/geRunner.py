@@ -21,6 +21,7 @@ class geRunner(commandRunner.commandRunner):
             with drmaa.Session() as s:
                 jt = s.createJobTemplate()
                 jt.workingDirectory = self.path
+                jt.jobEnvironment = self.env_vars
                 jt.outputPath = ":"+self.std_out_str
                 jt.remoteCommand = self.command_token
                 jt.args = self.ge_params
@@ -36,13 +37,13 @@ class geRunner(commandRunner.commandRunner):
         output_dir = os.listdir(self.path)
 
         if retval.exitStatus not in success_params:
-            raise OSError("Exist status" + str(retval))
+            raise OSError("Exit status" + str(retval))
 
         self.output_data = {}
         for this_glob in self.out_globs:
             for outfile in output_dir:
                 if outfile.endswith(this_glob):
-                    with open(self.path+outfile, 'r') as content_file:
+                    with open(self.path+outfile, 'rb') as content_file:
                         self.output_data[outfile] = content_file.read()
 
         return(retval.exitStatus)

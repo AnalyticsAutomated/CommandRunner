@@ -1,6 +1,8 @@
 __pycache__/*
 *.py[cod]
+.pypirc
 *$py.class
 commandRunner.egg-info/*
 dist/*
 nose-1.3.7-py3.4.egg/*
+.eggs/*
