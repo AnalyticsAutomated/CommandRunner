@@ -384,5 +384,6 @@ class commandRunnerTestCase(unittest.TestCase):
                       "/tmp/TEST > out.stdout"
         self.assertEqual(self.r2.command, test_string)
 
+
 if __name__ == '__main__':
     unittest.main()

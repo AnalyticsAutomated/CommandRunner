@@ -18,14 +18,19 @@ class localRunnerTestCase(unittest.TestCase):
     id_string = "INTERESTING_ID_STRING"
     tmp_path = "/tmp/"
     cmd_simple = "ls /tmp"
-    cmd_complete = "ls $OPTIONS $FLAGS /tmp/$INPUT $OUTPUT"
+    cmd_complete = "ls -cd $P1 $P2 $P3 $P3 $P4 $VALUE $I1 $I1 $O1 $TMP/$ID"
+
     std_out_str = "out.stdout"
     # OPTIONAL
-    input_string = "input.in"
-    output_string = "output.out"
     flags = ['-l', '-ah']
-    options = {'-a': '12', 'b': '1'}
-    out_glob = ['out', ]
+    options = ['-a', 'b', '-c']
+    flags_with_options = ['-l', '-ah', '-a', 'b']
+    param_values = {'-a': {'value': '12', 'spacing': True, 'switchless': True},
+                    'b': {'value': '1', 'spacing': False, 'switchless': False},
+                    '-c': {'value': '10', 'spacing': True, 'switchless': False}
+                    }
+    in_glob = ['.in', ]
+    out_glob = ['.out', ]
     input_data = {"input.in": "SOME EXAMPLE DATA"}
 
     def setUp(self):
@@ -36,10 +41,9 @@ class localRunnerTestCase(unittest.TestCase):
                              std_out_str="outstuff")
         self.r2 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                               out_globs=self.out_glob,
+                              in_globs=self.in_glob
                               command=self.cmd_complete,
                               input_data=self.input_data,
-                              input_string=self.input_string,
-                              output_string=self.output_string,
                               flags=self.flags,
                               options=self.options,
                               env_vars={"DIR": "/THIS/DIR/",
@@ -98,7 +102,6 @@ class localRunnerTestCase(unittest.TestCase):
     def test_run_with_file_printing(self):
         r3 = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                          command="ls /tmp",
-                         output_string="output.out", out_globs=["out", ],
                          std_out_string=self.std_out_str)
         r3.prepare()
         exit_status = r3.run_cmd()
@@ -128,6 +131,7 @@ class localRunnerTestCase(unittest.TestCase):
         exit_status = self.r.run_cmd()
         self.r.tidy()
         self.assertEqual(os.path.exists(self.r.path), False)
+
 
 if __name__ == '__main__':
     unittest.main()

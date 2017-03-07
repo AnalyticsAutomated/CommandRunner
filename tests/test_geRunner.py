@@ -98,3 +98,7 @@ class geRunnerTestCase(unittest.TestCase):
 
     def test_flag_and_options_interpolation_does_not_occur(self):
         self.assertEqual(self.r.command_token, self.cmd_simple)
+
+
+if __name__ == '__main__':
+    unittest.main()

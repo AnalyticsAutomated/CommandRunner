@@ -97,19 +97,11 @@ class commandRunner():
             if isinstance(kwargs['in_globs'], list):
                 self.in_globs = kwargs.pop('in_globs', '')
             else:
-<<<<<<< HEAD
-                raise TypeError('input_string must be str')
-
-        if 'output_string' in kwargs:
-            if isinstance(kwargs['output_string'], str):
-                self.output_string = kwargs.pop('output_string', '')
-=======
                 raise TypeError('in_globs must be list')
 
         if 'value_string' in kwargs:
             if isinstance(kwargs['value_string'], str):
                 self.value_string = kwargs.pop('value_string', '')
->>>>>>> a9645e1dd83ddc540958fa7d3334b79d9fa6ec50
             else:
                 raise TypeError('value_string must be str')
 
