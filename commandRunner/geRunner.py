@@ -1,7 +1,7 @@
 import os
 import re
 import types
-#import drmaa
+import drmaa
 from commandRunner import commandRunner
 
 
