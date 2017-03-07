@@ -34,6 +34,7 @@ class geRunnerTestCase(unittest.TestCase):
                           params=self.flags_with_options,
                           command=self.cmd_complex,
                           input_data=self.input_data,
+                          env_vars=self.env_vars,
                           std_out_str=self.std_out
                           )
         self.r2 = geRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
@@ -43,6 +44,7 @@ class geRunnerTestCase(unittest.TestCase):
                            input_data=self.input_data,
                            params=self.flags_with_options,
                            param_values=self.param_values,
+                           env_vars=self.env_vars,
                            std_out_str=self.std_out
                            )
 
