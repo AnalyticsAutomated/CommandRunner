@@ -120,7 +120,7 @@ class pythonRunnerTestCase(unittest.TestCase):
                          "P1 = True\nP2 = True\nP3 = {'-a': '12'}\n"
                          "P4 = {'b': '1'}\n")
 
-    def tests_script_looks_sane_after_perpare(self):
+    def tests_script_looks_sane_after_prepare(self):
         self.r6.prepare()
         self.assertEqual(self.r6.script,
                          "import os\nos.chdir('/tmp/INTERESTING_ID_STRING/')\n"

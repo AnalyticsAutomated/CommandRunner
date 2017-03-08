@@ -8,7 +8,6 @@ from multiprocessing import Process, Queue
 from commandRunner import commandRunner
 from subprocess import Popen
 from subprocess import PIPE
-
 # runs a dialect of python where escapes must be doubled \\n etc...
 
 
@@ -61,10 +60,10 @@ class rRunner(commandRunner.commandRunner):
         # create the params that are passed in
         for i, this_param in enumerate(self.params):
             if this_param in self.param_values:
-                self.script_header += "P"+str(i+1)+" <- list()\n" +\
-                                      "P"+str(i+1)+"[['"+this_param+"']] <-" +\
+                self.script_header += "P"+str(i+1)+"[['"+this_param+"']] " +\
+                                      "<- '" +\
                                       self.param_values[this_param]['value'] +\
-                                      "\n"
+                                      "'\n"
             else:
                 self.script_header += "P"+str(i+1)+" <- TRUE\n"
 
@@ -72,18 +71,22 @@ class rRunner(commandRunner.commandRunner):
         # script
         self.script = self.script_header+self.script+"\n"+self.script_footer
 
-    def exec_code(self, stdoq, stdeq):
+    def close_connection(self):
+        self.rserve_connection.close()
+
+    def exec_code(self):
+        import rpy2.robjects as robjects
         stdout_buffer = StringIO()
         stderr_buffer = StringIO()
         sys.stdout = stdout_buffer
         sys.stderr = stderr_buffer
         error_string = ''
         try:
-            exec(self.compiled_script)
+            robjects.r(self.compiled_script)
         except Exception as e:
             # if the script fails here makes sure we close all the file handles
             # before returning to the parent process
-            exec(self.script_footer)
+            robjects.r(self.script_footer)
             error_string = traceback.format_exc()
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
@@ -100,15 +103,14 @@ class rRunner(commandRunner.commandRunner):
         '''
         self.output_data = {}
         try:
+            # we fork here so that each Robjects we import gets a new
+            # r process handle and new global R namespace
             stdout_queue = Queue()
             stderr_queue = Queue()
             p = Process(target=self.exec_code,
                         args=(stdout_queue, stderr_queue))
             p.start()
             p.join()
-
-            self.output_data[self.std_out_str] = stdout_queue.get()
-            self.output_data[self.tmp_id+".stderr"] = stderr_queue.get()
 
         except Exception as e:
             raise Exception("Unable to call child process:"+str(e))
