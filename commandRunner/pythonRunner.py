@@ -2,12 +2,14 @@ import os
 import re
 import types
 import sys
+import traceback
 from io import StringIO
 from multiprocessing import Process, Queue
 from commandRunner import commandRunner
 from subprocess import Popen
 from subprocess import PIPE
 
+# runs a dialect of python where escapes must be doubled \\n etc...
 
 class pythonRunner(commandRunner.commandRunner):
 
@@ -68,7 +70,6 @@ class pythonRunner(commandRunner.commandRunner):
         # having prepped the header elements we prepend them to the provided
         # script
         self.script = self.script_header+self.script+"\n"+self.script_footer
-
         try:
             self.compiled_script = compile(self.script, self.tmp_id+".py",
                                            "exec")
@@ -83,13 +84,20 @@ class pythonRunner(commandRunner.commandRunner):
         stderr_buffer = StringIO()
         sys.stdout = stdout_buffer
         sys.stderr = stderr_buffer
-        exec(self.compiled_script)
+        error_string = ''
+        try:
+            exec(self.compiled_script)
+        except Exception as e:
+            # if the script fails here makes sure we close all the file handles
+            # before returning to parent process
+            exec(self.script_footer)
+            error_string = traceback.format_exc()
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
 
-        # buffer.getvalue()
         stdoq.put(stdout_buffer.getvalue())
-        stdeq.put(stderr_buffer.getvalue())
+        error_string += stderr_buffer.getvalue()
+        stdeq.put(error_string)
 
     def run_cmd(self):
         '''
