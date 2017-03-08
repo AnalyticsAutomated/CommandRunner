@@ -146,6 +146,12 @@ class pythonRunnerTestCase(unittest.TestCase):
         self.assertEqual(self.r9.output_data[self.id_string+self.out_glob[0]],
                          b"hello")
 
+    def test_user_script_will_does_not_gather_data_if_output_blank(self):
+        self.r6.prepare()
+        self.r6.run_cmd()
+        self.assertFalse(self.id_string+self.out_glob[0] in
+                         self.r6.output_data)
+
     def test_user_script_will_read_input_and_echo_stdout(self):
         self.r10.prepare()
         self.r10.run_cmd()

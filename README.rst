@@ -2,20 +2,21 @@ commandRunner
 =============
 
 commandRunner is yet another package created to handle running commands,
-scripts or programs on the command line. The simplest class lets you run
-anything locally on your machine. Later classes are targeted at Analytics
-and data processing platforms such as Grid Engine and HADOOP. The class
-attempts to run commands in a moderately thread safe way by requiring that
-you provide with sufficient information that it can build a uniquely labeled
-tmp directory for all input and output files. This means that this can play
-nicely with things like Celery workers.
+scripts or programs on the command line. Targetted at thread safe execution
+for Celery. The simplest class lets you run anything locally on your machine.
+Other classes are targeted at Analytics and data processing platforms such as
+Grid Engine (and eventually HADOOP). The class attempts to run commands in a
+moderately threadsafe way by requiring that you provide it with sufficient
+information that it can build a uniquely labeled temporary directory for all
+input and output files. This means that this can play nicely with things like
+Celery workers.
 
-Release 0.6.0
+Release 0.7.0
 -------------
 
-This release supports running commands on local shalle and DRMAA compliant grid
-engine installs (ogs, soge and univa). Commands are built/interpolated via
-some simple rules.
+This release supports running commands on local unix shell and DRMAA compliant grid
+engine installs (ogs, soge and univa). We can also run strings of python
+code.  Commands are built/interpolated via some simple rule described bellow.
 
 Future
 ------
@@ -25,7 +26,7 @@ Hadoop, Octave, and SAS Server.
 
 Usage
 -----
-This is the basic usage::
+This is the basic usage for running a binary using the local unix shell::
 
     from commandRunner.localRunner import *
 
