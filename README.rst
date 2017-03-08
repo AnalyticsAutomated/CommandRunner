@@ -24,8 +24,12 @@ Future
 In the future we'll provide classes to run commands over RServe,
 Hadoop, Octave, and SAS Server.
 
-Usage
------
+Binary Execution Usage
+----------------------
+
+geRunner and localRunner are capable of executing arbitrary binaries as
+though run in a unix shell
+
 This is the basic usage for running a binary using the local unix shell::
 
     from commandRunner.localRunner import *
@@ -46,6 +50,7 @@ output, paths and command parameters. Take the following call::
 
     r = localRunner(tmp_id="ID_STRING",
                     tmp_path="/tmp/",
+                    in_glob=['.in', ]
                     out_glob=['.file', ],
                     params=["-a","-l", "b"]
                     param_values={'b': {'value': 'this',
@@ -53,8 +58,8 @@ output, paths and command parameters. Take the following call::
                                    'switchless': False},
                              }
                     command="ls $P1 $P2 $P$ /tmp",
-                    input_data={DATA_DICT},
-                    str_out_str="file.stdout",
+                    input_data={'input.in': 'some input data'},
+                    std_out_str="file.stdout",
                     identifier="string"
                     env_vars={"str":"str"},)
 
@@ -134,7 +139,7 @@ a file where the Grid Engine thread STDOUT will be captured::
     r = geRunner(tmp_id="ID_STRING", tmp_path="/tmp/", out_glob=['.file'],
                  command="ls -lah", input_data={"File.txt": "DATA"},
                  params = ["-file"]
-                 param_values = {"-file": {'value': '$O1',
+                 param_values = {'-file': {'value': '$O1',
                                    'spacing': True,
                                    'switchless': False},
                                  },
@@ -148,6 +153,85 @@ Although DRMAA functions differently you can think of this as effectively
 run the following command (after following the interpolation rules)::
 
    ls -file out.file -lah > std.out
+
+Script Usage
+------------
+
+commandRunner classes can also call code natively, pythonRunner will
+take blocks of python code. Construct a temp directory and place the
+input data there. Any code passed will then execute as though is is
+running from the temp directory (via os.chdir).
+
+Execution by pythonRunner is somewhat different to geRunner and localRunner.
+Instances of this class take a script arg and not a command arg and .prepare()
+and .run_cmd() function somewhat differently::
+
+    from commandRunner.pythonRunner import *
+
+    r = pythonRunner(tmp_id="ID_STRING",
+                    tmp_path="/tmp/",
+                    in_glob=['.in', ]
+                    out_glob=['.file', ],
+                    params=["-a","-l", "b"]
+                    param_values={'b': {'value': 'this',
+                                   'spacing': True,
+                                   'switchless': False},
+                             }
+                    script="print(str(I1.read()))",
+                    input_data={'input.in': 'some input data'},
+                    std_out_str="file.stdout",
+                    identifier="string"
+                    env_vars={"str":"str"},
+                    )
+    r.prepare()
+    exit_status = r.run_cmd()
+    r.tidy()
+    print(r.output_data)
+
+As before input_data is a dict of 'file name': 'data' pairs which will be
+written to a directory specified by tmp_path+tmp_id+"/" (i.e. /tmp/ID_STRING/).
+in_glob and out_glob specify a set of file handles that will be opened for you
+so you do not have to open them in your provided script. in_globs should be
+matched to file names in input_data. In the example above the in_glob for '.in'
+will open the input.in data file and that will be available as a variable named
+I1. If there were more entries in in_glob they would be named in sequence I1, I2
+I3 etc... out_glob functionas as a form of promise that your script will write
+to some output files. For each entry in out_glob a filehandle for writing is
+opened using the tmp_id as the file name. As above O1 would open a file
+called ID_STRING.file
+
+Params are also created as variables, named P1, P2, P3, etc... These refer in
+order to the values in the params list. If there is not an entry for the
+param in param_values these variables are set to True. If there is an entry
+in the param_values arg then the variable will take the value from that entry.
+In the example above P3 is mapped to entity 'b' and 'b' has a value of "this",
+so P3="this". In this way some runtime configuration can be passed in to the
+script.
+
+script is an argument that takes any valid python string. In the example above
+it reads the contents from the I1 filehandle ('some input data') and then
+echos that to stdout. In theory you can place any sized piece of python here
+but smaller scripts made up of a handful of lines are probably more
+ane/sensible. Note that escape characters will need to be double escaped (\\n
+not \n)
+
+When .prepare() is called a temp directory is build and the input_data files
+are written to it. Next various filehandles and param variables are composed
+and appended to the provided script. Once the new script is prepared compile()
+is called on it to ensure the script is a valid python string. Assuming
+.prepare() is succesful you can then call .run_cmd().
+
+run_cmd() creates a new python subprocess, runs the script in this child
+process (insulating it from the namespace of the parent process) and captures
+any writes to stdout and stderr.
+
+Once complete you can find the outputs in the .output_data dict. There will
+be and entry for stdout with a key named for your std_out_str. There will also
+be a key for stderr named tmp_id+".err", in this example "ID_STRING.err". As
+per local runner there will be a key for every file that matched the provided
+out_glob list as long as the file has a non-zero size. If you do not
+write to one of the provided output file handles they will not be collected
+in output_data
 
 Tests
 -----

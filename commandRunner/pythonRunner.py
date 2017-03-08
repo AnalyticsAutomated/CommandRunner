@@ -89,7 +89,7 @@ class pythonRunner(commandRunner.commandRunner):
             exec(self.compiled_script)
         except Exception as e:
             # if the script fails here makes sure we close all the file handles
-            # before returning to parent process
+            # before returning to the parent process
             exec(self.script_footer)
             error_string = traceback.format_exc()
         sys.stdout = sys.__stdout__
