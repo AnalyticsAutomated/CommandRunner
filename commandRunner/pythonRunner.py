@@ -127,6 +127,6 @@ class pythonRunner(commandRunner.commandRunner):
                     with open(self.path+outfile, 'rb') as content_file:
                         content = content_file.read()
                         if len(content) > 0:
-                            self.output_data[outfile] = content_file.read()
+                            self.output_data[outfile] = content
 
         return()
