@@ -2,47 +2,104 @@ import os
 import re
 import types
 from commandRunner import commandRunner
-from subprocess import call
+from subprocess import Popen
+from subprocess import PIPE
 
 
 class pythonRunner(commandRunner.commandRunner):
 
     def __init__(self, **kwargs):
-        script = ""
+        commandRunner.commandRunner.__init__(self, **kwargs)
+        self.script = ""
+        self.script_header = ""
+        self.script_footer = ""
+        self.compiled_script = None
         if isinstance(kwargs['script'], str):
             self.script = kwargs.pop('script', '')
         else:
             raise TypeError('script must be a string')
 
-        commandRunner.commandRunner.__init__(self, **kwargs)
+    def prepare(self):
+        '''
+            override the default prepare to add some bits of code to
+            provide the input, output filehandles and param as variables
+        '''
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
 
-    def run_cmd(self, success_params=[0]):
+        if self.input_data is not None:
+            for key in self.input_data.keys():
+                file_path = self.path+key
+                fh = open(file_path, 'w')
+                fh.write(self.input_data[key])
+                fh.close()
+
+        self.script_header += "import os\nos.chdir('"+self.path+"')\n"
+        # files have been written to the tmp space, now we create python
+        # commands to open them in the script
+        in_dir = sorted(os.listdir(self.path))
+        for i, this_glob in enumerate(self.in_globs):
+            for infile in in_dir:
+                if infile.endswith(this_glob):
+                    self.script_header += "I"+str(i+1)+" = open('" +\
+                                          infile+"', 'r')\n"
+                    self.script_footer += "I"+str(i+1)+".close()\n"
+
+        # now we open a set of files for the outglobs, given the identifier
+        #
+        for i, this_glob in enumerate(self.out_globs):
+            self.script_header += \
+                   "O"+str(i+1)+" = open('"+self.tmp_id+this_glob+"', 'w')\n"
+            self.script_footer += "O"+str(i+1)+".close()\n"
+
+        # create the params that are passed in
+        for i, this_param in enumerate(self.params):
+            if this_param in self.param_values:
+                self.script_header += "P"+str(i+1)+" = {'"+this_param+"': '" +\
+                                      self.param_values[this_param]['value'] +\
+                                      "'}\n"
+            else:
+                self.script_header += "P"+str(i+1)+" = True\n"
+
+        # having prepped the header elements we prepend them to the provided
+        # script
+        self.script = self.script_header+self.script+"\n"+self.script_footer
+
+        try:
+            self.compiled_script = compile(self.script, self.tmp_id+".py",
+                                           "exec")
+        except SyntaxError as e:
+            raise SyntaxError("Could not compile provided script. "
+                              "Check syntax")
+        except Exception as e:
+            raise Exception("Script could not compile")
+
+    def exec_code(self, code):
+        exec(code)
+
+    def run_cmd(self):
         '''
             run the command we constructed when the object was initialised.
             If exit is 0 then pass back if not decide what to do next. (try
             again?)
         '''
-        exit_status = None
-        os.chdir(self.path)
-        try:
-            if self.env_vars:
-                # print("USING ENVS!!!")
-                exit_status = call(self.command, shell=True, env=self.env_vars)
-            else:
-                exit_status = call(self.command, shell=True)
-        except Exception as e:
-            raise OSError("call() attempt failed")
-
-        output_dir = os.listdir(self.path)
-
-        if exit_status not in success_params:
-            raise OSError("Exit status " + str(exit_status))
 
         self.output_data = {}
+        try:
+            pass
+            # exec in child process and capture stdout and stderr
+
+            # self.output_data[self.tmp_id+self.std_out_str] =\
+            #     codeproc.stdout.read()
+            # self.output_data[self.tmp_id+".stderr"] = codeproc.stderr.read()
+        except Exception as e:
+            raise Exception("Unable to call child process:"+str(e))
+
+        output_dir = os.listdir(self.path)
         for this_glob in self.out_globs:
             for outfile in output_dir:
                 if outfile.endswith(this_glob):
                     with open(self.path+outfile, 'rb') as content_file:
                         self.output_data[outfile] = content_file.read()
 
-        return(exit_status)
+        return()

@@ -152,7 +152,6 @@ class commandRunnerTestCase(unittest.TestCase):
                            command=self.cmd_simple)
         self.assertEqual(r3.in_globs, [])
 
-
     def test_env_vars_is_dict(self):
         self.assertEqual(self.r2.env_vars, self.env_vars)
 
@@ -185,7 +184,6 @@ class commandRunnerTestCase(unittest.TestCase):
                           command=self.cmd_complete,
                           input_data=self.input_data,
                           env_vars={"Well": 1, "huh": "that"})
-
 
     def test_params_is_list(self):
         self.assertEqual(self.r2.params, self.flags_with_options)
@@ -270,7 +268,6 @@ class commandRunnerTestCase(unittest.TestCase):
                           param_values={'a': {'value': '123',
                                               'switchless': True,
                                               'spacing': "True"}})
-
 
     def test_translate_command_correctly_interpolate_output(self):
         """

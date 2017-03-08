@@ -32,6 +32,7 @@ class localRunnerTestCase(unittest.TestCase):
     input_data = {"input.in": "SOME EXAMPLE DATA"}
     value = "12"
     identifier = "TEST"
+
     def setUp(self):
         self.r = localRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
                              out_globs=self.out_glob,

@@ -14,6 +14,7 @@ class geRunnerTestCase(unittest.TestCase):
     tmp_path = "/tmp/"
     cmd_simple = "/usr/bin/ls"
     cmd_complex = "/usr/bin/ls $P1 $P2 $P3 $P4 $P5"
+    cmd_integration "/bin/ls -lah /tmp"
     # OPTIONAL
 
     flags_with_options = ['-l', '-ah', '-a', 'b', '-c']
@@ -80,6 +81,8 @@ class geRunnerTestCase(unittest.TestCase):
         self.assertEqual(os.path.isdir(path), True)
         self.assertEqual(os.path.exists(file1), True)
 
+    # strictly this is an integration test and should be elsewhere or at least
+    # mocked here and tested in some integration tests
     def test_command_executes(self):
         self.r2.prepare()
         exit_status = self.r2.run_cmd()

@@ -162,6 +162,7 @@ Run tests with::
     python setup.py test -s tests/test_commandRunner.py
     python setup.py test -s tests/test_localRunner.py
     python setup.py test -s tests/test_geRunner.py
+    python setup.py test -s tests/test_pythonRunner.py
 
 TODO
 ----

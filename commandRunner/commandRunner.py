@@ -26,31 +26,37 @@ class commandRunner():
             env_vars = {name:value}
             value_string="stuffForCommandline"
         '''
-        self.tmp_id = None
-        self.tmp_path = None
-        self.in_globs = []
-        self.out_globs = []
-        self.command = None
-        self.input_data = None
-        self.command = None
-        self.tokens = []
-        self.ge_tokens = []
-        self.identifier = None
+        self.tmp_id = None  # an id for the task, will be used a dir name for
+        # the process
+        self.tmp_path = None  # the parent path for the process /tmp is useful
+        self.in_globs = []  # list of file endings presemt in input_data
+        self.out_globs = []  # a list of file endings you are promising will
+        # be produced
+        self.command = None  # a bash command for local and ge runners
+        self.input_data = None  # dict of file name:data pairs
+        self.tokens = []  # each part of the comman divided on space
+        self.ge_tokens = []  # set of tokens for ge RUnner (exclueds the exe)
+        self.identifier = None  # this is for command interpolation
 
-        self.value_string = None
-        self.params = []
-        self.param_values = {}
-        self.output_data = None
-        self.path = None
-        self.std_out_str = None
-        self.env_vars = None
+        self.value_string = None  # an arbitrary string used for $VALUE
+        # interpolation
+        self.params = []  # a list of param values for interpolation
+        # (P1, P2 etc.)
+        self.param_values = {}  # a dict of config values for params
+        self.output_data = None  # a putative dict that will hold the file
+        # data out_globs promises
+        self.path = None  # builds a dir name using tmp_path and tmp_id
+        self.std_out_str = None  # the name of a file that holds the contents
+        # of stdout
+        self.env_vars = None  # a dict of name:str pairs for bash env vars
 
         self.__check_arguments(kwargs)
 
         self.tmp_path = re.sub("/$", '', self.tmp_path)
         self.path = self.tmp_path+"/"+self.tmp_id+"/"
-#       self.command = self.__translate_command(kwargs.pop('command', ''))
-        self.command = self._translate_command(self.command)
+
+        if self.command:
+            self.command = self._translate_command(self.command)
 
     def __check_arguments(self, kwargs):
         # flags = (strings,)
@@ -64,10 +70,11 @@ class commandRunner():
         else:
             raise TypeError('tmp_id must be a string')
 
-        if isinstance(kwargs['command'], str):
-            self.command = kwargs.pop('command', '')
-        else:
-            raise TypeError('command must be a string')
+        if 'command' in kwargs:
+            if isinstance(kwargs['command'], str):
+                self.command = kwargs.pop('command', '')
+            else:
+                raise TypeError('command must be a string')
 
         if 'identifier' in kwargs:
             if isinstance(kwargs['identifier'], str):
@@ -145,18 +152,19 @@ class commandRunner():
                     raise TypeError('param_values "spacing" provided is not '
                                     'boolean')
 
-        if ">" in self.command:
-            raise ValueError("Command string provides stdout redirection"
-                             ", please provide std_out_str instead")
-        if "$TMP" in self.command and self.tmp_path is None:
-            raise ValueError("Command string references $TMP but no "
-                             "tmp_path provided")
-        if "$VALUE" in self.command and self.value_string is None:
-            raise ValueError("Command string references $VALUE but no "
-                             "value_string provided")
-        if "$ID" in self.command and self.identifier is None:
-            raise ValueError("Command string references $ID but no "
-                             "identifier provided")
+        if self.command:
+            if ">" in self.command:
+                raise ValueError("Command string provides stdout redirection"
+                                 ", please provide std_out_str instead")
+            if "$TMP" in self.command and self.tmp_path is None:
+                raise ValueError("Command string references $TMP but no "
+                                 "tmp_path provided")
+            if "$VALUE" in self.command and self.value_string is None:
+                raise ValueError("Command string references $VALUE but no "
+                                 "value_string provided")
+            if "$ID" in self.command and self.identifier is None:
+                raise ValueError("Command string references $ID but no "
+                                 "identifier provided")
 
     def _translate_command(self, command):
         '''
