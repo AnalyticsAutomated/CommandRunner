@@ -11,6 +11,7 @@ from subprocess import PIPE
 
 # runs a dialect of python where escapes must be doubled \\n etc...
 
+
 class pythonRunner(commandRunner.commandRunner):
 
     def __init__(self, **kwargs):

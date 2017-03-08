@@ -15,8 +15,8 @@ Release 0.7.0
 -------------
 
 This release supports running commands on local unix shell and DRMAA compliant grid
-engine installs (ogs, soge and univa). We can also run strings of python
-code.  Commands are built/interpolated via some simple rule described bellow.
+engine installs (ogs, soge and univa) and it can also run strings of python
+code.  Commands are built/interpolated via some simple rules described below.
 
 Future
 ------
