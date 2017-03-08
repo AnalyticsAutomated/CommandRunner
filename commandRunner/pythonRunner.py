@@ -1,6 +1,9 @@
 import os
 import re
 import types
+import sys
+from io import StringIO
+from multiprocessing import Process, Queue
 from commandRunner import commandRunner
 from subprocess import Popen
 from subprocess import PIPE
@@ -14,6 +17,7 @@ class pythonRunner(commandRunner.commandRunner):
         self.script_header = ""
         self.script_footer = ""
         self.compiled_script = None
+
         if isinstance(kwargs['script'], str):
             self.script = kwargs.pop('script', '')
         else:
@@ -74,8 +78,18 @@ class pythonRunner(commandRunner.commandRunner):
         except Exception as e:
             raise Exception("Script could not compile")
 
-    def exec_code(self, code):
-        exec(code)
+    def exec_code(self, stdoq, stdeq):
+        stdout_buffer = StringIO()
+        stderr_buffer = StringIO()
+        sys.stdout = stdout_buffer
+        sys.stderr = stderr_buffer
+        exec(self.compiled_script)
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+
+        # buffer.getvalue()
+        stdoq.put(stdout_buffer.getvalue())
+        stdeq.put(stderr_buffer.getvalue())
 
     def run_cmd(self):
         '''
@@ -83,15 +97,18 @@ class pythonRunner(commandRunner.commandRunner):
             If exit is 0 then pass back if not decide what to do next. (try
             again?)
         '''
-
         self.output_data = {}
         try:
-            pass
-            # exec in child process and capture stdout and stderr
+            stdout_queue = Queue()
+            stderr_queue = Queue()
+            p = Process(target=self.exec_code,
+                        args=(stdout_queue, stderr_queue))
+            p.start()
+            p.join()
 
-            # self.output_data[self.tmp_id+self.std_out_str] =\
-            #     codeproc.stdout.read()
-            # self.output_data[self.tmp_id+".stderr"] = codeproc.stderr.read()
+            self.output_data[self.std_out_str] = stdout_queue.get()
+            self.output_data[self.tmp_id+".stderr"] = stderr_queue.get()
+
         except Exception as e:
             raise Exception("Unable to call child process:"+str(e))
 
@@ -100,6 +117,8 @@ class pythonRunner(commandRunner.commandRunner):
             for outfile in output_dir:
                 if outfile.endswith(this_glob):
                     with open(self.path+outfile, 'rb') as content_file:
-                        self.output_data[outfile] = content_file.read()
+                        content = content_file.read()
+                        if len(content) > 0:
+                            self.output_data[outfile] = content_file.read()
 
         return()
