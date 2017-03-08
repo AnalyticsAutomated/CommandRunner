@@ -32,7 +32,8 @@ class pythonRunnerTestCase(unittest.TestCase):
     flags_with_options = ['-l', '-ah', '-a', 'b']
     param_values = {'-a': {'value': '12', 'spacing': True, 'switchless': True},
                     'b': {'value': '1', 'spacing': False, 'switchless': False},
-                    '-c': {'value': '10', 'spacing': True, 'switchless': False}}
+                    '-c': {'value': '10', 'spacing': True, 'switchless': False}
+                    }
     input_data = {"input.in": "SOME EXAMPLE DATA",
                   "input.this": "MORE DATA"}
 

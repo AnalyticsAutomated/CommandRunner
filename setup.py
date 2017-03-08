@@ -7,8 +7,8 @@ def readme():
 
 setup(name='commandRunner',
       version='0.7.0',
-      description='Allows thread safe object oriented running of commanline '
-                  'operations',
+      description='Allows thread safe, object oriented running of commandline '
+                  'operations and blocks of code',
       long_description=readme(),
       url='https://github.com/AnalyticsAutomated/commandRunner.git',
       author='Analytics Automated',

@@ -203,10 +203,10 @@ called ID_STRING.file
 Params are also created as variables, named P1, P2, P3, etc... These refer in
 order to the values in the params list. If there is not an entry for the
 param in param_values these variables are set to True. If there is an entry
-in the param_values arg then the variable will take the value from that entry.
-In the example above P3 is mapped to entity 'b' and 'b' has a value of "this",
-so P3="this". In this way some runtime configuration can be passed in to the
-script.
+in the param_values arg then the variable will be a dict with a key value
+pair that gives you the name and the value. In the example above P3 is a
+dict of {'b': "this"}, In this way some runtime configuration can be passed in
+to the script.
 
 script is an argument that takes any valid python string. In the example above
 it reads the contents from the I1 filehandle ('some input data') and then
@@ -233,6 +233,16 @@ out_glob list as long as the file has a non-zero size. If you do not
 write to one of the provided output file handles they will not be collected
 in output_data
 
+R Scripts
+---------
+
+rRunner makes use of Rserve to execute R code and you must install Rserve first.
+See, http://www.rforge.net/Rserve/doc.html, use 'R CMD Rserve' to start the server.
+If Rserve fails to launch check out
+https://bugs.launchpad.net/ubuntu/+source/rserve/+bug/1325325. Stop Rserve
+with a unix kill command.
+You will also need to `pip install pyRserve`
+
 Tests
 -----
 
@@ -248,6 +258,7 @@ Run tests with::
     python setup.py test -s tests/test_localRunner.py
     python setup.py test -s tests/test_geRunner.py
     python setup.py test -s tests/test_pythonRunner.py
+    python setup.py test -s tests/test_rRunner.py
 
 TODO
 ----
