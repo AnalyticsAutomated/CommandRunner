@@ -158,9 +158,14 @@ Script Usage
 ------------
 
 commandRunner classes can also call code natively, pythonRunner will
-take blocks of python code. Construct a temp directory and place the
-input data there. Any code passed will then execute as though is is
-running from the temp directory (via os.chdir).
+take blocks of python code, rRunner will take blocks of R code. Both construct
+a temp directory and place the input data there. Any code passed will then
+execute as though is is running from the temp directory (via os.chdir).
+
+In theory you can provide any arbitrarily large chunk of python or R code.
+In practice you probably want to keeps these to short single function
+scripts for less than 100 lines as debugging is quite tricky given the
+layer of abstraction.
 
 Execution by pythonRunner is somewhat different to geRunner and localRunner.
 Instances of this class take a script arg and not a command arg and .prepare()
@@ -236,12 +241,25 @@ in output_data
 R Scripts
 ---------
 
-rRunner makes use of Rserve to execute R code and you must install Rserve first.
-See, http://www.rforge.net/Rserve/doc.html, use 'R CMD Rserve' to start the server.
-If Rserve fails to launch check out
-https://bugs.launchpad.net/ubuntu/+source/rserve/+bug/1325325. Stop Rserve
-with a unix kill command.
-You will also need to `pip install pyRserve`
+rRunner makes use of rpy2 to execute R code. You may need to amend your
+LD_LIBRARY_PATH
+https://stats.stackexchange.com/questions/6056/problems-with-librblas-so-on-ubuntu-with-rpy2
+
+The API and broad functioning is roughly similar to the pythonRunner. Unlike
+pythonRunner code is not checked for syntactic correctness before execution.
+So any errors will occur at runtime for the code you provide.
+
+File handles (I1, I2, ... and O1, O2 etc...) are available as above. These
+are opened with R's base file() function. You may wish instead to override
+these with things like csv.reader() where it is more convenient. Params (P1,
+P2, etc...) also exist, name:value pairings are avaiable R lists() rather
+than python dicts.
+
+Unlike the python case it is imperative you check the that the error data in
+output_data is empty before assuming your R code ran successfully. As above
+you can find the outputs from the stdout of your script in the output_data
+variable. We leave it to you
+
 
 Tests
 -----

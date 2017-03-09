@@ -74,11 +74,12 @@ class rRunner(commandRunner.commandRunner):
     def exec_code(self, stdoq, stdeq):
         import rpy2.robjects as robjects
         from rpy2.rinterface import RRuntimeError
+        from rpy2.rinterface import RRuntimeWarning
 
         stdout_buffer = StringIO()
         stderr_buffer = StringIO()
-        # sys.stdout = stdout_buffer
-        # sys.stderr = stderr_buffer
+        sys.stdout = stdout_buffer
+        sys.stderr = stderr_buffer
         error_string = ''
         try:
             robjects.r(self.script_header)

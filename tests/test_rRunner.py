@@ -56,6 +56,9 @@ class rRunnerTestCase(unittest.TestCase):
         kwarg_set["out_globs"] = self.out_glob
         self.r6 = rRunner(script=self.script_simple, **kwarg_set)
         self.r7 = rRunner(script="print('hu)", **kwarg_set)
+        self.r8 = rRunner(script="write('hello', stderr())", **kwarg_set)
+        self.r9 = rRunner(script="cat('hello', file=O1)", **kwarg_set)
+        self.r10 = rRunner(script="data<-readLines(I1)\nprint(data)", **kwarg_set)
 
     # def tearDown(self):
     #     path = self.tmp_path+self.id_string
@@ -123,9 +126,39 @@ class rRunnerTestCase(unittest.TestCase):
     def test_user_script_can_raise_and_write_to_stderr_file(self):
         self.r7.prepare()
         self.r7.run_cmd()
-        #print(self.r7.output_data[self.id_string+".stderr"])
-        self.assertEqual(self.r7.output_data[self.id_string+".stderr"],
-                         "")
+        self.assertTrue("unexpected INCOMPLETE_STRING" in
+                        self.r7.output_data[self.id_string+".stderr"])
+
+    def test_user_script_can_write_to_stderr_file(self):
+        self.r8.prepare()
+        self.r8.run_cmd()
+        self.assertTrue("RRuntimeWarning: hello" in
+                        self.r8.output_data[self.id_string+".stderr"])
+
+    def test_user_script_will_write_to_stdout_file(self):
+        self.r6.prepare()
+        self.r6.run_cmd()
+        self.assertEqual(self.r6.output_data["outstuff"], "[1]\n "
+                                                          "\"hello\"\n\n\n")
+
+    def test_user_script_will_does_not_gather_data_if_output_blank(self):
+        self.r6.prepare()
+        self.r6.run_cmd()
+        self.assertFalse(self.id_string+self.out_glob[0] in
+                         self.r6.output_data)
+
+    def test_user_script_will_write_to_output_file(self):
+        self.r9.prepare()
+        self.r9.run_cmd()
+        self.assertEqual(self.r9.output_data[self.id_string+self.out_glob[0]],
+                         b"hello")
+
+    def test_user_script_will_read_input_and_echo_stdout(self):
+        self.r10.prepare()
+        self.r10.run_cmd()
+        self.assertEqual(self.r10.output_data["outstuff"],
+                         "[1]\n "
+                         "\"SOME EXAMPLE DATA\"\n\n\n")
 
 if __name__ == '__main__':
     unittest.main()
