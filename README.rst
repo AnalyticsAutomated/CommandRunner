@@ -2,7 +2,7 @@ commandRunner
 =============
 
 commandRunner is yet another package created to handle running commands,
-scripts or programs on the command line. Targetted at thread safe execution
+scripts or programs on the command line targetted at thread safe execution
 for Celery. The simplest class lets you run anything locally on your machine.
 Other classes are targeted at Analytics and data processing platforms such as
 Grid Engine (and eventually HADOOP). The class attempts to run commands in a
@@ -11,7 +11,13 @@ information that it can build a uniquely labeled temporary directory for all
 input and output files. This means that this can play nicely with things like
 Celery workers.
 
-Release 0.7.0
+Installation
+------------
+
+You can install the required python modules with pip using the included
+requirements.txt file.
+
+Release 0.8.0
 -------------
 
 This release supports running commands on local unix shell and DRMAA compliant grid
@@ -21,8 +27,8 @@ code.  Commands are built/interpolated via some simple rules described below.
 Future
 ------
 
-In the future we'll provide classes to run commands over RServe,
-Hadoop, Octave, and SAS Server.
+In the future we'll provide classes to run commands over Hadoop, Octave, and
+SAS Server.
 
 Binary Execution Usage
 ----------------------
