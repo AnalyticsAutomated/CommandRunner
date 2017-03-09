@@ -273,6 +273,9 @@ these with things like csv.reader() where it is more convenient. Params (P1,
 P2, etc...) also exist, name:value pairings are avaiable R lists() rather
 than python dicts.
 
+Anything provided to env_vars will be add to the script environment using
+Sys.setenv()
+
 Unlike the python case it is imperative you check the that the error data in
 output_data is empty before assuming your R code ran successfully. As above
 you can find the outputs from the stdout of your script in the output_data
