@@ -17,6 +17,15 @@ Installation
 You can install the required python modules with pip using the included
 requirements.txt file.
 
+If using R you must have a recent >3.0.0 installation of R and its development
+libraries.
+
+If you are using the DRMAA support you must be able to set the environment
+variables
+
+DRMAA_LIBRARY_PATH
+SGE_ROOT
+
 Release 0.8.0
 -------------
 
