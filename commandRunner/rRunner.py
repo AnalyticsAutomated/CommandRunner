@@ -41,12 +41,12 @@ class rRunner(commandRunner.commandRunner):
 
         # files have been written to the tmp space, now we create python
         # commands to open them in the script
-        self.script_header += "setwd('"+self.tmp_path+"')\n"
+        self.script_header += "setwd('"+self.path+"')\n"
         in_dir = sorted(os.listdir(self.path))
         for i, this_glob in enumerate(self.in_globs):
             for infile in in_dir:
                 if infile.endswith(this_glob):
-                    self.script_header += "I"+str(i+1)+" <- open('" +\
+                    self.script_header += "I"+str(i+1)+" <- file('" +\
                                           infile+"', 'r')\n"
                     self.script_footer += "close(I"+str(i+1)+")\n"
 
@@ -54,40 +54,55 @@ class rRunner(commandRunner.commandRunner):
         #
         for i, this_glob in enumerate(self.out_globs):
             self.script_header += \
-                   "O"+str(i+1)+" <- open('"+self.tmp_id+this_glob+"', 'w')\n"
+                   "O"+str(i+1)+" <- file('"+self.tmp_id+this_glob+"', 'w')\n"
             self.script_footer += "close(O"+str(i+1)+")\n"
 
         # create the params that are passed in
         for i, this_param in enumerate(self.params):
             if this_param in self.param_values:
-                self.script_header += "P"+str(i+1)+"[['"+this_param+"']] " +\
+                self.script_header += "P"+str(i+1)+" <- list()\n" +\
+                                      "P"+str(i+1)+"[['"+this_param+"']] " +\
                                       "<- '" +\
                                       self.param_values[this_param]['value'] +\
                                       "'\n"
             else:
                 self.script_header += "P"+str(i+1)+" <- TRUE\n"
 
-        # having prepped the header elements we prepend them to the provided
-        # script
-        self.script = self.script_header+self.script+"\n"+self.script_footer
-
     def close_connection(self):
         self.rserve_connection.close()
 
-    def exec_code(self):
+    def exec_code(self, stdoq, stdeq):
         import rpy2.robjects as robjects
+        from rpy2.rinterface import RRuntimeError
+
         stdout_buffer = StringIO()
         stderr_buffer = StringIO()
-        sys.stdout = stdout_buffer
-        sys.stderr = stderr_buffer
+        # sys.stdout = stdout_buffer
+        # sys.stderr = stderr_buffer
         error_string = ''
         try:
-            robjects.r(self.compiled_script)
-        except Exception as e:
+            robjects.r(self.script_header)
+        except RRuntimeError as e:
             # if the script fails here makes sure we close all the file handles
             # before returning to the parent process
+            error_string = str(e)
+
+        try:
+            robjects.r(self.script)
+        except RRuntimeError as e:
+            # if the script fails here makes sure we close all the file handles
+            # before returning to the parent process
+            error_string = str(e)
+        except Exception as e:
+            error_string = str(e)
+
+        try:
             robjects.r(self.script_footer)
-            error_string = traceback.format_exc()
+        except RRuntimeError as e:
+            # if the script fails here makes sure we close all the file handles
+            # before returning to the parent process
+            error_string = str(e)
+
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
 
@@ -111,6 +126,9 @@ class rRunner(commandRunner.commandRunner):
                         args=(stdout_queue, stderr_queue))
             p.start()
             p.join()
+
+            self.output_data[self.std_out_str] = stdout_queue.get()
+            self.output_data[self.tmp_id+".stderr"] = stderr_queue.get()
 
         except Exception as e:
             raise Exception("Unable to call child process:"+str(e))
