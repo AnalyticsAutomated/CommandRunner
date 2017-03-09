@@ -39,6 +39,9 @@ class rRunnerTestCase(unittest.TestCase):
                      'tmp_path': self.tmp_path,
                      'std_out_str': "outstuff", }
         self.r = rRunner(script=self.script_simple, **kwarg_set)
+        self.r11 = rRunner(script=self.script_simple,
+                           env_vars={"DIR": "/THIS/DIR/",
+                                     "DIR2": "/THAT/DIR2/"}, **kwarg_set)
         kwarg_set["in_globs"] = self.in_glob
         kwarg_set["input_data"] = self.input_data
         self.r2 = rRunner(script=self.script_simple, **kwarg_set)
@@ -58,8 +61,10 @@ class rRunnerTestCase(unittest.TestCase):
         self.r7 = rRunner(script="print('hu)", **kwarg_set)
         self.r8 = rRunner(script="write('hello', stderr())", **kwarg_set)
         self.r9 = rRunner(script="cat('hello', file=O1)", **kwarg_set)
-        self.r10 = rRunner(script="data<-readLines(I1)\nprint(data)", **kwarg_set)
-
+        self.r10 = rRunner(script="data<-readLines(I1)\nprint(data)",
+                           env_vars={"DIR": "/THIS/DIR/",
+                                     "DIR2": "/THAT/DIR2/"},
+                           **kwarg_set)
     # def tearDown(self):
     #     path = self.tmp_path+self.id_string
     #     if os.path.exists(path):
@@ -107,6 +112,14 @@ class rRunnerTestCase(unittest.TestCase):
                          "P3[['-a']] <- '12'\n"
                          "P4 <- list()\n"
                          "P4[['b']] <- '1'\n")
+
+    def test_prepare_with_withenv_vars(self):
+        self.r11.prepare()
+        self.assertEqual(self.r11.script_header,
+                         "setwd('"+self.path+"')\n"
+                         "Sys.setenv(DIR='/THIS/DIR/')\n"
+                         "Sys.setenv(DIR2='/THAT/DIR2/')"
+                         "\n")
 
     def test_script_looks_sane_after_prepare(self):
         self.r6.prepare()

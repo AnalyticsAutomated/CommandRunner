@@ -74,7 +74,14 @@ class pythonRunnerTestCase(unittest.TestCase):
         self.r7 = pythonRunner(script=self.script_raise, **kwarg_set)
         self.r8 = pythonRunner(script=self.script_stderr, **kwarg_set)
         self.r9 = pythonRunner(script=self.script_print_output, **kwarg_set)
-        self.r10 = pythonRunner(script=self.script_print_input, **kwarg_set)
+        self.r10 = pythonRunner(script=self.script_print_input,
+                                env_vars={"DIR": "/THIS/DIR/",
+                                "DIR2": "/THAT/DIR2/"}, **kwarg_set)
+        self.r11 = pythonRunner(tmp_id=self.id_string, tmp_path=self.tmp_path,
+                                script=self.script_simple,
+                                std_out_str="outstuff",
+                                env_vars={"DIR": "/THIS/DIR/",
+                                          "DIR2": "/THAT/DIR2/"})
 
     def tearDown(self):
         path = self.tmp_path+self.id_string
@@ -92,6 +99,14 @@ class pythonRunnerTestCase(unittest.TestCase):
         self.r.prepare()
         self.assertEqual(self.r.script_header,
                          "import os\nos.chdir('/tmp/INTERESTING_ID_STRING/')"
+                         "\n")
+
+    def test_prepare_with_withenv_vars(self):
+        self.r11.prepare()
+        self.assertEqual(self.r11.script_header,
+                         "import os\nos.chdir('/tmp/INTERESTING_ID_STRING/')\n"
+                         "os.environ['DIR'] = '/THIS/DIR/'\n"
+                         "os.environ['DIR2'] = '/THAT/DIR2/'"
                          "\n")
 
     def test_prepare_with_just_infiles(self):
@@ -173,17 +188,8 @@ class pythonRunnerTestCase(unittest.TestCase):
     def test_user_script_can_raise_and_write_to_stderr_file(self):
         self.r7.prepare()
         self.r7.run_cmd()
-        self.assertEqual(self.r7.output_data[self.id_string+".stderr"],
-                         "Traceback (most recent call last):\n"
-                         "  File \"/scratch0/NOT_BACKED_UP/dbuchan/Code/"
-                         "commandRunner/commandRunner/pythonRunner.py\", "
-                         "line 89, in exec_code\n"
-                         "    exec(self.compiled_script)\n"
-                         "  File \"INTERESTING_ID_STRING.py\", line 9, in "
-                         "<module>\n"
-                         "    from subprocess import Popen\n"
-                         "ValueError\n")
-
+        self.assertTrue("ValueError" in
+                        self.r7.output_data[self.id_string+".stderr"])
 
 if __name__ == '__main__':
     unittest.main()

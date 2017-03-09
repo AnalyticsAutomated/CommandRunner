@@ -68,6 +68,11 @@ class rRunner(commandRunner.commandRunner):
             else:
                 self.script_header += "P"+str(i+1)+" <- TRUE\n"
 
+        if self.env_vars is not None:
+            for key in sorted(self.env_vars):
+                self.script_header += "Sys.setenv("+key +\
+                                      "='"+self.env_vars[key]+"')\n"
+
     def close_connection(self):
         self.rserve_connection.close()
 
@@ -143,4 +148,4 @@ class rRunner(commandRunner.commandRunner):
                         if len(content) > 0:
                             self.output_data[outfile] = content
 
-        return()
+        return(0)

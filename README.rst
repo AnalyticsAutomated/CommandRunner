@@ -228,6 +228,9 @@ pair that gives you the name and the value. In the example above P3 is a
 dict of {'b': "this"}, In this way some runtime configuration can be passed in
 to the script.
 
+Anything provided to env_vars will be add to the script environment using
+additions to os.environ[]
+
 script is an argument that takes any valid python string. In the example above
 it reads the contents from the I1 filehandle ('some input data') and then
 echos that to stdout. In theory you can place any sized piece of python here

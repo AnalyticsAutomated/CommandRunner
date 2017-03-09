@@ -68,6 +68,11 @@ class pythonRunner(commandRunner.commandRunner):
             else:
                 self.script_header += "P"+str(i+1)+" = True\n"
 
+        if self.env_vars is not None:
+            for key in sorted(self.env_vars):
+                self.script_header += "os.environ['"+key+"'] = '" +\
+                                       self.env_vars[key]+"'\n"
+
         # having prepped the header elements we prepend them to the provided
         # script
         self.script = self.script_header+self.script+"\n"+self.script_footer
@@ -130,4 +135,4 @@ class pythonRunner(commandRunner.commandRunner):
                         if len(content) > 0:
                             self.output_data[outfile] = content
 
-        return()
+        return(0)
