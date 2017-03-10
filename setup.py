@@ -6,7 +6,7 @@ def readme():
         return f.read()
 
 setup(name='commandRunner',
-      version='0.8.2',
+      version='0.8.3',
       description='Allows thread safe, object oriented running of commandline '
                   'operations and blocks of code',
       long_description=readme(),

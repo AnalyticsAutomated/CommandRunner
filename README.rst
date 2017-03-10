@@ -26,7 +26,7 @@ variables
 DRMAA_LIBRARY_PATH
 SGE_ROOT
 
-Release 0.8.1
+Release 0.8.3
 -------------
 
 This release supports running commands on local unix shell and DRMAA compliant grid
