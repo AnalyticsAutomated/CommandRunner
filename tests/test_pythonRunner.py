@@ -172,24 +172,24 @@ class pythonRunnerTestCase(unittest.TestCase):
         self.r10.prepare()
         self.r10.run_cmd()
         self.assertEqual(self.r10.output_data["outstuff"],
-                         "SOME EXAMPLE DATA\n")
+                         b"SOME EXAMPLE DATA\n")
 
     def test_user_script_will_write_to_stdout_file(self):
         self.r6.prepare()
         self.r6.run_cmd()
-        self.assertEqual(self.r6.output_data["outstuff"], "hello\n")
+        self.assertEqual(self.r6.output_data["outstuff"], b"hello\n")
 
     def test_user_script_can_write_to_stderr_file(self):
         self.r8.prepare()
         self.r8.run_cmd()
         self.assertEqual(self.r8.output_data[self.id_string+".stderr"],
-                         "hello\n")
+                        b"hello\n")
 
     def test_user_script_can_raise_and_write_to_stderr_file(self):
         self.r7.prepare()
         self.r7.run_cmd()
         self.assertTrue("ValueError" in
-                        self.r7.output_data[self.id_string+".stderr"])
+                        self.r7.output_data[self.id_string+".stderr"].decode())
 
 if __name__ == '__main__':
     unittest.main()

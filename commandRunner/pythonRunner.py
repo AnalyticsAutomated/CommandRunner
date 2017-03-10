@@ -121,8 +121,9 @@ class pythonRunner(commandRunner.commandRunner):
             p.start()
             p.join()
 
-            self.output_data[self.std_out_str] = stdout_queue.get()
-            self.output_data[self.tmp_id+".stderr"] = stderr_queue.get()
+            self.output_data[self.std_out_str] = stdout_queue.get().encode()
+            self.output_data[self.tmp_id+".stderr"] = \
+                stderr_queue.get().encode()
 
         except Exception as e:
             raise Exception("Unable to call child process:"+str(e))

@@ -140,19 +140,19 @@ class rRunnerTestCase(unittest.TestCase):
         self.r7.prepare()
         self.r7.run_cmd()
         self.assertTrue("unexpected INCOMPLETE_STRING" in
-                        self.r7.output_data[self.id_string+".stderr"])
+                        self.r7.output_data[self.id_string+".stderr"].decode())
 
     def test_user_script_can_write_to_stderr_file(self):
         self.r8.prepare()
         self.r8.run_cmd()
         self.assertTrue("RRuntimeWarning: hello" in
-                        self.r8.output_data[self.id_string+".stderr"])
+                        self.r8.output_data[self.id_string+".stderr"].decode())
 
     def test_user_script_will_write_to_stdout_file(self):
         self.r6.prepare()
         self.r6.run_cmd()
         self.assertEqual(self.r6.output_data["outstuff"], "[1]\n "
-                                                          "\"hello\"\n\n\n")
+                                                          "\"hello\"\n\n\n".encode())
 
     def test_user_script_will_does_not_gather_data_if_output_blank(self):
         self.r6.prepare()
@@ -171,7 +171,7 @@ class rRunnerTestCase(unittest.TestCase):
         self.r10.run_cmd()
         self.assertEqual(self.r10.output_data["outstuff"],
                          "[1]\n "
-                         "\"SOME EXAMPLE DATA\"\n\n\n")
+                         "\"SOME EXAMPLE DATA\"\n\n\n".encode())
 
 if __name__ == '__main__':
     unittest.main()
