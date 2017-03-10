@@ -73,6 +73,8 @@ class rRunner(commandRunner.commandRunner):
             for key in sorted(self.env_vars):
                 self.script_header += "Sys.setenv("+key +\
                                       "='"+self.env_vars[key]+"')\n"
+        # sanitise the script string a little
+        self.script = self.script.replace("\r", '')
 
     def close_connection(self):
         self.rserve_connection.close()

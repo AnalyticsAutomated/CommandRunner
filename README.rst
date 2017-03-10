@@ -26,7 +26,7 @@ variables
 DRMAA_LIBRARY_PATH
 SGE_ROOT
 
-Release 0.8.3
+Release 0.8.4
 -------------
 
 This release supports running commands on local unix shell and DRMAA compliant grid
@@ -181,6 +181,10 @@ In theory you can provide any arbitrarily large chunk of python or R code.
 In practice you probably want to keeps these to short single function
 scripts for less than 100 lines as debugging is quite tricky given the
 layer of abstraction.
+
+It is also worth noting that accepted code forms a dialect of both python and
+R; the " character is not valid and you must use the single quote to bound
+strings.
 
 Execution by pythonRunner is somewhat different to geRunner and localRunner.
 Instances of this class take a script arg and not a command arg and .prepare()

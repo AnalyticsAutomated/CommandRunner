@@ -76,6 +76,7 @@ class pythonRunner(commandRunner.commandRunner):
 
         # having prepped the header elements we prepend them to the provided
         # script
+        self.script = self.script.replace("\r", '')
         self.script = self.script_header+self.script+"\n"+self.script_footer
         try:
             self.compiled_script = compile(self.script, self.tmp_id+".py",
