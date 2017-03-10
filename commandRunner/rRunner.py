@@ -4,7 +4,8 @@ import types
 import sys
 import traceback
 from io import StringIO
-from multiprocessing import Process, Queue
+#from multiprocessing import Process, Queue
+from billiard import Process, Queue
 from commandRunner import commandRunner
 from subprocess import Popen
 from subprocess import PIPE
