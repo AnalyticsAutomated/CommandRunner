@@ -258,4 +258,5 @@ class commandRunner():
                 print(e)
         if os.path.exists(self.path):
             os.rmdir(self.path)
-        os.umask(self.current_umask)
+        if self.debug:
+            os.umask(self.current_umask)
