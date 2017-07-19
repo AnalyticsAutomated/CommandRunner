@@ -1,5 +1,6 @@
 import unittest
 import os
+import stat
 from unittest.mock import patch
 
 from commandRunner.localRunner import *
@@ -49,7 +50,8 @@ class localRunnerTestCase(unittest.TestCase):
                               value_string=self.value,
                               identifier=self.identifier,
                               env_vars={"DIR": "/THIS/DIR/",
-                                        "DIR2": "/THAT/DIR2/"})
+                                        "DIR2": "/THAT/DIR2/"},
+                              debug=True)
 
     def tearDown(self):
         path = self.tmp_path+self.id_string
@@ -62,6 +64,12 @@ class localRunnerTestCase(unittest.TestCase):
                 except e:
                     print(e)
             os.rmdir(path)
+
+
+    def test_debug_creates_world_rw_tmp(self):
+        self.r2.prepare()
+        print(self.r2.path)
+        self.assertEqual(os.stat(self.r2.path).st_mode, 16895)
 
     def test_prepare_correctly_makes_directory_and_file(self):
         self.r.prepare()

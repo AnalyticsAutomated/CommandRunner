@@ -3,7 +3,6 @@ import re
 import types
 from subprocess import call
 
-
 class commandRunner():
 
     def __init__(self, **kwargs):
@@ -24,7 +23,8 @@ class commandRunner():
             identifier = "string"
             std_out_string="str.stdout"
             env_vars = {name:value}
-            value_string="stuffForCommandline"
+            value_string="stuffForCommandline
+            debug=[True|False]"
         '''
         self.tmp_id = None  # an id for the task, will be used a dir name for
         # the process
@@ -49,11 +49,13 @@ class commandRunner():
         self.std_out_str = None  # the name of a file that holds the contents
         # of stdout
         self.env_vars = None  # a dict of name:str pairs for bash env vars
+        self.debug = False # in debug mode the tmp directory made is world r/w
 
         self.__check_arguments(kwargs)
 
         self.tmp_path = re.sub("/$", '', self.tmp_path)
         self.path = self.tmp_path+"/"+self.tmp_id+"/"
+        self.current_umask = 146
 
         if self.command:
             self.command = self._translate_command(self.command)
@@ -133,6 +135,12 @@ class commandRunner():
                 self.param_values = kwargs.pop('param_values', '')
             else:
                 raise TypeError('param_values must be dict')
+
+        if 'debug' in kwargs:
+            if isinstance(kwargs['debug'], bool):
+                self.debug = kwargs.pop('debug', '')
+            else:
+                raise TypeError('debug must be bool')
 
         if len(self.param_values) > 0:
             if not all(isinstance(x, dict) for x in self.param_values.values()):
@@ -216,7 +224,11 @@ class commandRunner():
             Makes a directory and then moves the input data file there
         '''
         if not os.path.exists(self.path):
-            os.makedirs(self.path)
+            if self.debug:
+                self.current_umask = os.umask(0O000)
+                os.makedirs(self.path)
+            else:
+                os.makedirs(self.path)
 
         if self.input_data is not None:
             for key in self.input_data.keys():
@@ -246,3 +258,4 @@ class commandRunner():
                 print(e)
         if os.path.exists(self.path):
             os.rmdir(self.path)
+        os.umask(self.current_umask)

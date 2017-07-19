@@ -76,7 +76,8 @@ output, paths and command parameters. Take the following call::
                     input_data={'input.in': 'some input data'},
                     std_out_str="file.stdout",
                     identifier="string"
-                    env_vars={"str":"str"},)
+                    env_vars={"str":"str"},
+                    debug=False,)
 
 This effectively builds the following command::
 
@@ -117,6 +118,10 @@ would result in a file with the path /tmp/ID_STRING/test.file
 
 env_vars is a dict of key:value strings which is used to set the unix
 environment variables for the running command.
+
+debug takes a boolean. this controls if the tmp directory created is world
+writeable. Debug mode assumes you wish to leave behind the tmp dir to
+allow other process to access or analyse it.
 
 Note that only tmp_id, tmp_path and command are required. Omitting
 input_data or out_glob assumes that there are respectively no input files to

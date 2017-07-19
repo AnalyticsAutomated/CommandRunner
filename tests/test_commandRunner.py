@@ -92,6 +92,13 @@ class commandRunnerTestCase(unittest.TestCase):
                           command=self.cmd_simple, input_data=self.input_data,
                           std_out_str=123)
 
+    def test_debug_bool_is_not_bool_raises_type_error(self):
+        self.assertRaises(TypeError, commandRunner, tmp_id=self.id_string,
+                          tmp_path=self.tmp_path,
+                          out_globs=self.out_glob,
+                          command=self.cmd_simple, input_data=self.input_data,
+                          std_out_str=123, debug="stringthing")
+
     def test_tmp_id_is_string(self):
         self.assertEqual(self.r.tmp_id, self.id_string)
 
@@ -380,7 +387,6 @@ class commandRunnerTestCase(unittest.TestCase):
                       "INTERESTING_ID_STRING.in INTERESTING_ID_STRING.out " \
                       "/tmp/TEST > out.stdout"
         self.assertEqual(self.r2.command, test_string)
-
 
 if __name__ == '__main__':
     unittest.main()
