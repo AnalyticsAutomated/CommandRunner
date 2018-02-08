@@ -147,6 +147,7 @@ class rRunner(commandRunner.commandRunner):
         for this_glob in self.out_globs:
             for outfile in output_dir:
                 if outfile.endswith(this_glob):
+                    os.chmod(self.path+outfile, 0o666)
                     with open(self.path+outfile, 'rb') as content_file:
                         content = content_file.read()
                         if len(content) > 0:

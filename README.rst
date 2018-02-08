@@ -26,7 +26,7 @@ variables
 DRMAA_LIBRARY_PATH
 SGE_ROOT
 
-Release 0.8.6
+Release 0.8.7
 -------------
 
 This release supports running commands on local unix shell and DRMAA compliant grid
@@ -311,8 +311,7 @@ Run tests with::
 TODO
 ----
 
-1. Implement rserveRunner for running commands in r
-2. Implement hadoopRunner for running command on Hadoop
-3. Implement sasRunner for a SAS backend
-4. Implement octaveRunner for Octave backend
-5. matlab? mathematica?
+1. Implement hadoopRunner for running command on Hadoop
+2. Implement sasRunner for a SAS backend
+3. Implement octaveRunner for Octave backend
+4. matlab? mathematica?
