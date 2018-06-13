@@ -47,7 +47,7 @@ class geRunner(commandRunner.commandRunner):
                     with open(self.path+outfile, 'rb') as content_file:
                         self.output_data[outfile] = content_file.read()
 
-        if self.std_out_str is not None and os.path.isfile(self.std_out_str:
+        if self.std_out_str is not None and os.path.isfile(self.std_out_str):
             os.chmod(self.std_out_str, 0o666)
 
         return(retval.exitStatus)
