@@ -5,8 +5,9 @@ def readme():
     with open('README.rst') as f:
         return f.read()
 
+
 setup(name='commandRunner',
-      version='0.8.7',
+      version='0.8.8',
       description='Allows thread safe, object oriented running of commandline '
                   'operations and blocks of code',
       long_description=readme(),

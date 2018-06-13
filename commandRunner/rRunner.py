@@ -153,4 +153,7 @@ class rRunner(commandRunner.commandRunner):
                         if len(content) > 0:
                             self.output_data[outfile] = content
 
+        if self.std_out_str is not None and os.path.isfile(self.std_out_str):
+            os.chmod(self.std_out_str, 0o666)
+
         return(0)

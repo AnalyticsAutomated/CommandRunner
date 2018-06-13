@@ -1,4 +1,5 @@
 import os
+import os.path
 import re
 import types
 from commandRunner import commandRunner
@@ -39,5 +40,8 @@ class localRunner(commandRunner.commandRunner):
                     os.chmod(self.path+outfile, 0o666)
                     with open(self.path+outfile, 'rb') as content_file:
                         self.output_data[outfile] = content_file.read()
+
+        if self.std_out_str is not None and os.path.isfile(self.std_out_str):
+            os.chmod(self.std_out_str, 0o666)
 
         return(exit_status)
