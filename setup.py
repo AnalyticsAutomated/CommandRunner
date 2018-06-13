@@ -7,7 +7,7 @@ def readme():
 
 
 setup(name='commandRunner',
-      version='0.8.9',
+      version='0.8.10',
       description='Allows thread safe, object oriented running of commandline '
                   'operations and blocks of code',
       long_description=readme(),
