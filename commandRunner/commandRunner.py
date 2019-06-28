@@ -234,7 +234,11 @@ class commandRunner():
         if self.input_data is not None:
             for key in self.input_data.keys():
                 file_path = self.path+key
-                fh = open(file_path, 'w')
+                fh = None
+                if type(self.input_data[key]) is str:
+                    fh = open(file_path, 'w')
+                else:
+                    fh = open(file_path, 'wb')
                 fh.write(self.input_data[key])
                 fh.close()
 
