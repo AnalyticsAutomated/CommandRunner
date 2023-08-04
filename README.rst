@@ -26,18 +26,12 @@ variables
 DRMAA_LIBRARY_PATH
 SGE_ROOT
 
-Release 0.8.7
--------------
+Release 0.8.12
+--------------
 
 This release supports running commands on local unix shell and DRMAA compliant grid
 engine installs (ogs, soge and univa) and it can also run strings of python
 code.  Commands are built/interpolated via some simple rules described below.
-
-Future
-------
-
-In the future we'll provide classes to run commands over Hadoop, Octave, and
-SAS Server.
 
 Binary Execution Usage
 ----------------------
@@ -311,7 +305,5 @@ Run tests with::
 TODO
 ----
 
-1. Implement hadoopRunner for running command on Hadoop
-2. Implement sasRunner for a SAS backend
-3. Implement octaveRunner for Octave backend
-4. matlab? mathematica?
+1. Implement octaveRunner for Octave backend
+2. matlab? mathematica?
